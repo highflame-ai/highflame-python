@@ -2,7 +2,7 @@
 name = "javelin-sdk"
 version = "RELEASE_VERSION"
 description = "Python client for Javelin"
-authors = ["Sharath Rajasekar <sharath@getjavelin.com>"]
+authors = ["Sharath Rajasekar <sharath@highflame.com>"]
 readme = "README.md"
 license = "Apache-2.0"
 packages = [
