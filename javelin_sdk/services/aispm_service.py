@@ -26,7 +26,12 @@ class AISPMService:
 
    def _handle_response(self, response: Response) -> None:
        if response.status_code >= 400:
-           error = response.json().get("error", "Unknown error")
+           try:
+               error_data = response.json()
+               # Handle different error response formats
+               error = error_data.get("error") or error_data.get("message") or str(error_data)
+           except:
+               error = f"HTTP {response.status_code}: {response.text}"
            raise Exception(f"API error: {error}")
 
    # Customer Methods
@@ -51,7 +56,12 @@ class AISPMService:
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
-       return CustomerResponse(**response.json())
+       response_data = response.json()
+       # Check if response indicates failure (even with 200 status)
+       if isinstance(response_data, dict) and response_data.get("success") is False:
+           error_msg = response_data.get("message") or response_data.get("error") or "Request failed"
+           raise Exception(f"API error: {error_msg}")
+       return CustomerResponse(**response_data)
 
    def update_customer(self, customer: Customer) -> CustomerResponse:
        request = Request(
