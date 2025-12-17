@@ -30,7 +30,13 @@ from javelin_sdk.models import (
     Secrets,
     Template,
     Templates,
-    Customer, AWSConfig, AzureConfig, UsageResponse, AlertResponse,Request,HttpMethod,
+    Customer,
+    AWSConfig,
+    AzureConfig,
+    UsageResponse,
+    AlertResponse,
+    Request,
+    HttpMethod,
 )
 
 
@@ -47,18 +53,26 @@ def get_javelin_client_aispm():
         cache_data = json.load(json_file)
 
     # Retrieve the list of gateways
-    gateways = cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {}).get("public_metadata", {}).get("Gateways", [])
+    gateways = (
+        cache_data.get("memberships", {})
+        .get("data", [{}])[0]
+        .get("organization", {})
+        .get("public_metadata", {})
+        .get("Gateways", [])
+    )
     if not gateways:
         raise ValueError("No gateways found in the configuration.")
 
     # Automatically select the first gateway (index 0)
     selected_gateway = gateways[0]
     base_url = selected_gateway["base_url"]
-    
+
     # Get organization metadata (where account_id might be stored)
-    organization = cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {})
+    organization = (
+        cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {})
+    )
     org_metadata = organization.get("public_metadata", {})
-    
+
     # Get account_id from multiple possible locations (in order of preference):
     # 1. Gateway's account_id field
     # 2. Organization's public_metadata account_id
@@ -66,9 +80,9 @@ def get_javelin_client_aispm():
     account_id = selected_gateway.get("account_id")
     if not account_id:
         account_id = org_metadata.get("account_id")
-    
+
     role_arn = selected_gateway.get("role_arn")
-    
+
     # Extract account_id from role ARN if still not found (format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME)
     if role_arn and not account_id:
         try:
@@ -77,17 +91,17 @@ def get_javelin_client_aispm():
                 account_id = parts[4]
         except (IndexError, AttributeError):
             pass
-    
+
     javelin_api_key = selected_gateway.get("api_key_value", "placeholder")
-   
+
     # Initialize and return the JavelinClient
     config = JavelinConfig(
         base_url=base_url,
         javelin_api_key=javelin_api_key,
     )
-    
+
     client = JavelinClient(config)
-    
+
     # Store account_id in client for AISPM service to use
     if account_id:
         client._aispm_account_id = account_id
@@ -110,7 +124,13 @@ def get_javelin_client():
         cache_data = json.load(json_file)
 
     # Retrieve the list of gateways
-    gateways = cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {}).get("public_metadata", {}).get("Gateways", [])
+    gateways = (
+        cache_data.get("memberships", {})
+        .get("data", [{}])[0]
+        .get("organization", {})
+        .get("public_metadata", {})
+        .get("Gateways", [])
+    )
     if not gateways:
         raise ValueError("No gateways found in the configuration.")
 
@@ -159,11 +179,9 @@ def create_customer(args):
         name=args.name,
         description=args.description,
         metrics_interval=args.metrics_interval,
-        security_interval=args.security_interval
+        security_interval=args.security_interval,
     )
     return client.aispm.create_customer(customer)
-
-
 
 
 def get_customer(args):
@@ -173,7 +191,7 @@ def get_customer(args):
     try:
         client = get_javelin_client_aispm()
         response = client.aispm.get_customer()
-        
+
         # Pretty print the response for CLI output
         formatted_response = {
             "name": response.name,
@@ -182,9 +200,9 @@ def get_customer(args):
             "security_interval": response.security_interval,
             "status": response.status,
             "created_at": response.created_at.isoformat(),
-            "modified_at": response.modified_at.isoformat()
+            "modified_at": response.modified_at.isoformat(),
         }
-        
+
         print(json.dumps(formatted_response, indent=2))
     except Exception as e:
         print(f"Error getting customer: {e}")
@@ -200,6 +218,7 @@ def configure_aws(args):
     except Exception as e:
         print(f"Error configuring AWS: {e}")
 
+
 def get_aws_config(args):
     """
     Gets AWS configurations using the AISPM service.
@@ -213,7 +232,9 @@ def get_aws_config(args):
     except Exception as e:
         print(f"Error getting AWS configurations: {e}")
 
+
 # Add these functions to commands.py
+
 
 def delete_aws_config(args):
     """
@@ -225,6 +246,7 @@ def delete_aws_config(args):
         print(f"AWS configuration '{args.name}' deleted successfully.")
     except Exception as e:
         print(f"Error deleting AWS config: {e}")
+
 
 def get_azure_config(args):
     """
@@ -238,6 +260,7 @@ def get_azure_config(args):
     except Exception as e:
         print(f"Error getting Azure config: {e}")
 
+
 def configure_azure(args):
     try:
         client = get_javelin_client_aispm()
@@ -248,6 +271,7 @@ def configure_azure(args):
     except Exception as e:
         print(f"Error configuring Azure: {e}")
 
+
 def get_usage(args):
     try:
         client = get_javelin_client_aispm()
@@ -255,11 +279,12 @@ def get_usage(args):
             provider=args.provider,
             cloud_account=args.account,
             model=args.model,
-            region=args.region
+            region=args.region,
         )
         print(json.dumps(usage.dict(), indent=2))
     except Exception as e:
         print(f"Error getting usage: {e}")
+
 
 def get_alerts(args):
     try:
@@ -268,11 +293,12 @@ def get_alerts(args):
             provider=args.provider,
             cloud_account=args.account,
             model=args.model,
-            region=args.region
+            region=args.region,
         )
         print(json.dumps(alerts.dict(), indent=2))
     except Exception as e:
         print(f"Error getting alerts: {e}")
+
 
 def create_gateway(args):
     try:
@@ -325,7 +351,13 @@ def list_gateways(args):
         cache_data = json.load(json_file)
 
     # Retrieve the list of gateways
-    gateways = cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {}).get("public_metadata", {}).get("Gateways", [])
+    gateways = (
+        cache_data.get("memberships", {})
+        .get("data", [{}])[0]
+        .get("organization", {})
+        .get("public_metadata", {})
+        .get("Gateways", [])
+    )
     if not gateways:
         print("No gateways found in the configuration.")
         return
