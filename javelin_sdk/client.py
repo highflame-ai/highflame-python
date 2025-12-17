@@ -91,27 +91,19 @@ class JavelinClient:
             self._client.close()
 
     def _prepare_request(self, request: Request) -> tuple:
-        if request.route.startswith("v1/admin/aispm"):
-            url = f"{self.config.base_url.rstrip('/')}/{request.route}"
-            if request.query_params:
-                query_string = "&".join(f"{k}={v}" for k, v in request.query_params.items())
-                url += f"?{query_string}"
-                
-
-        else:
-            url = self._construct_url(
-                gateway_name=request.gateway,
-                provider_name=request.provider,
-                route_name=request.route,
-                secret_name=request.secret,
-                template_name=request.template,
-                trace=request.trace,
-                query=request.is_query,
-                archive=request.archive,
-                query_params=request.query_params,
-                is_transformation_rules=request.is_transformation_rules,
-                is_reload=request.is_reload,
-            )
+        url = self._construct_url(
+            gateway_name=request.gateway,
+            provider_name=request.provider,
+            route_name=request.route,
+            secret_name=request.secret,
+            template_name=request.template,
+            trace=request.trace,
+            query=request.is_query,
+            archive=request.archive,
+            query_params=request.query_params,
+            is_transformation_rules=request.is_transformation_rules,
+            is_reload=request.is_reload,
+        )
 
         headers = {**self._headers, **(request.headers or {})}
         
@@ -163,6 +155,14 @@ class JavelinClient:
         is_transformation_rules: bool = False,
         is_reload: bool = False,
     ) -> str:
+        # Handle AISPM routes: they use the route directly with base_url
+        if route_name and route_name.startswith("v1/admin/aispm"):
+            url = f"{self.config.base_url.rstrip('/')}/{route_name}"
+            if query_params:
+                query_string = "&".join(f"{k}={v}" for k, v in query_params.items())
+                url += f"?{query_string}"
+            return url
+
         url_parts = [self.base_url]
             
 
@@ -222,15 +222,6 @@ class JavelinClient:
 
         if query_params:
             query_string = "&".join(f"{k}={v}" for k, v in query_params.items())
-            url += f"?{query_string}"
-
-        return url
-
-    def _construct_aispm_url(self, request: Request) -> str:
-        url = request.route
-
-        if request.query_params:
-            query_string = "&".join(f"{k}={v}" for k, v in request.query_params.items())
             url += f"?{query_string}"
 
         return url
