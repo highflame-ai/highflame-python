@@ -53,9 +53,10 @@ class JavelinClient:
     @property
     def client(self):
         if self._client is None:
+            # Don't set headers at client level - they'll be added per-request
+            # This allows us to exclude x-api-key for AISPM requests
             self._client = httpx.Client(
                 base_url=self.base_url,
-                headers=self._headers,
                 timeout= self.config.timeout if self.config.timeout else API_TIMEOUT,
             )
         return self._client
@@ -63,8 +64,9 @@ class JavelinClient:
     @property
     def aclient(self):
         if self._aclient is None:
+            # Don't set headers at client level - they'll be added per-request
             self._aclient = httpx.AsyncClient(
-                base_url=self.base_url, headers=self._headers, timeout=API_TIMEOUT
+                base_url=self.base_url, timeout=API_TIMEOUT
             )
         return self._aclient
 
@@ -112,6 +114,12 @@ class JavelinClient:
             )
 
         headers = {**self._headers, **(request.headers or {})}
+        
+        # For AISPM requests: if account_id header is present, remove x-api-key
+        # AISPM uses account_id-based authentication instead of API key
+        if request.route.startswith("v1/admin/aispm") and "x-javelin-accountid" in headers:
+            headers.pop("x-api-key", None)
+        
         return url, headers
 
     def _send_request_sync(self, request: Request) -> httpx.Response:
@@ -128,6 +136,8 @@ class JavelinClient:
     ) -> Union[httpx.Response, Coroutine[Any, Any, httpx.Response]]:
         url, headers = self._prepare_request(request)
         
+        # For httpx.Client, headers passed to request methods override client-level headers
+        # So we need to ensure we're passing the correct headers
         if request.method == HttpMethod.GET:
             return client.get(url, headers=headers)
         elif request.method == HttpMethod.POST:

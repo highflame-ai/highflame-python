@@ -1,13 +1,11 @@
-[project.urls]
-"Homepage" = "https://getjavelin.io"
-
 [tool.poetry]
 name = "javelin-sdk"
-version = "RELEASE_VERSION"
+version = "0.2.7-dev"
 description = "Python client for Javelin"
 authors = ["Sharath Rajasekar <sharath@getjavelin.io>"]
 readme = "README.md"
 license = "Apache-2.0"
+homepage = "https://dev.highflame.dev/sign-in"
 packages = [
     { include = "javelin_cli" },
     { include = "javelin_sdk" },

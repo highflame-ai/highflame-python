@@ -13,6 +13,17 @@ class AISPMService:
    def __init__(self, client):
        self.client = client
 
+   def _get_aispm_headers(self) -> Dict[str, str]:
+       """Get headers for AISPM requests, including account_id if available."""
+       headers = {}
+       # Check if account_id is stored in client (set by get_javelin_client_aispm)
+       account_id = getattr(self.client, '_aispm_account_id', None)
+       if account_id:
+           headers["x-javelin-accountid"] = account_id
+           headers["x-javelin-user"] = getattr(self.client, '_aispm_user', "test-user")
+           headers["x-javelin-userrole"] = getattr(self.client, '_aispm_userrole', "org:superadmin")
+       return headers
+
    def _handle_response(self, response: Response) -> None:
        if response.status_code >= 400:
            error = response.json().get("error", "Unknown error")
@@ -23,11 +34,10 @@ class AISPMService:
        request = Request(
            method=HttpMethod.POST,
            route="v1/admin/aispm/customer",
-           data=customer.dict()
+           data=customer.dict(),
+           headers=self._get_aispm_headers()
        )
-       print(f"Sending request: {request.method} {request.route}")
        response = self.client._send_request_sync(request)
-       print(f"Raw response: {response.text}")
        self._handle_response(response) 
        return CustomerResponse(**response.json())
    
@@ -36,7 +46,8 @@ class AISPMService:
    def get_customer(self) -> CustomerResponse:
        request = Request(
            method=HttpMethod.GET,
-           route="v1/admin/aispm/customer"
+           route="v1/admin/aispm/customer",
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -57,7 +68,8 @@ class AISPMService:
        request = Request(
            method=HttpMethod.POST,
            route="v1/admin/aispm/config/aws",
-           data=[config.dict() for config in configs]
+           data=[config.dict() for config in configs],
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -67,7 +79,8 @@ class AISPMService:
        request = Request(
            method=HttpMethod.POST,
            route="v1/admin/aispm/config/azure",
-           data=[config.dict() for config in configs]
+           data=[config.dict() for config in configs],
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -82,7 +95,8 @@ class AISPMService:
        """
        request = Request(
            method=HttpMethod.GET,
-           route="v1/admin/aispm/config/aws"
+           route="v1/admin/aispm/config/aws",
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -92,7 +106,8 @@ class AISPMService:
        request = Request(
            method=HttpMethod.POST,
            route="v1/admin/aispm/config/gcp",
-           data=[config.dict() for config in configs]
+           data=[config.dict() for config in configs],
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -120,7 +135,8 @@ class AISPMService:
        request = Request(
            method=HttpMethod.GET,
            route=route,
-           query_params=params
+           query_params=params,
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -148,7 +164,8 @@ class AISPMService:
        request = Request(
            method=HttpMethod.GET,
            route=route,
-           query_params=params
+           query_params=params,
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -179,7 +196,8 @@ class AISPMService:
        """
        request = Request(
            method=HttpMethod.DELETE,
-           route=f"v1/admin/aispm/config/aws/{name}"
+           route=f"v1/admin/aispm/config/aws/{name}",
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)
@@ -196,7 +214,8 @@ class AISPMService:
        """
        request = Request(
            method=HttpMethod.GET,
-           route="v1/admin/aispm/config/azure"
+           route="v1/admin/aispm/config/azure",
+           headers=self._get_aispm_headers()
        )
        response = self.client._send_request_sync(request)
        self._handle_response(response)

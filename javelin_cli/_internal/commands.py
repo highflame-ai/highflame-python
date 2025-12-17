@@ -54,17 +54,37 @@ def get_javelin_client_aispm():
     # Automatically select the first gateway (index 0)
     selected_gateway = gateways[0]
     base_url = selected_gateway["base_url"]
-    javelin_api_key = selected_gateway["api_key_value"]
-
-    # Ensure the API key is set before initializing
+    
+    # Get account_id from role_arn or account_id field
+    account_id = selected_gateway.get("account_id")
+    role_arn = selected_gateway.get("role_arn")
+    
+    # Extract account_id from role ARN if provided (format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME)
+    if role_arn and not account_id:
+        try:
+            parts = role_arn.split(":")
+            if len(parts) >= 5 and parts[2] == "iam":
+                account_id = parts[4]
+        except (IndexError, AttributeError):
+            pass
+    
+    javelin_api_key = selected_gateway.get("api_key_value", "placeholder")
    
     # Initialize and return the JavelinClient
     config = JavelinConfig(
         base_url=base_url,
         javelin_api_key=javelin_api_key,
     )
+    
+    client = JavelinClient(config)
+    
+    # Store account_id in client for AISPM service to use
+    if account_id:
+        client._aispm_account_id = account_id
+        client._aispm_user = "test-user"
+        client._aispm_userrole = "org:superadmin"
 
-    return JavelinClient(config)
+    return client
 
 
 def get_javelin_client():
