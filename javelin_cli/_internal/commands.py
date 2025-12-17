@@ -55,11 +55,21 @@ def get_javelin_client_aispm():
     selected_gateway = gateways[0]
     base_url = selected_gateway["base_url"]
     
-    # Get account_id from role_arn or account_id field
+    # Get organization metadata (where account_id might be stored)
+    organization = cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {})
+    org_metadata = organization.get("public_metadata", {})
+    
+    # Get account_id from multiple possible locations (in order of preference):
+    # 1. Gateway's account_id field
+    # 2. Organization's public_metadata account_id
+    # 3. Extract from role_arn if provided
     account_id = selected_gateway.get("account_id")
+    if not account_id:
+        account_id = org_metadata.get("account_id")
+    
     role_arn = selected_gateway.get("role_arn")
     
-    # Extract account_id from role ARN if provided (format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME)
+    # Extract account_id from role ARN if still not found (format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME)
     if role_arn and not account_id:
         try:
             parts = role_arn.split(":")
