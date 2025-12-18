@@ -1,15 +1,14 @@
 import argparse
-import importlib.metadata
-import os
-import webbrowser
-from pathlib import Path
-import json
 import http.server
+import importlib.metadata
+import json
+import random
 import socketserver
+import sys
 import threading
 import urllib.parse
-import random
-import sys
+import webbrowser
+from pathlib import Path
 
 import requests
 
@@ -66,24 +65,24 @@ def check_permissions():
     """Check if user has superadmin permissions"""
     home_dir = Path.home()
     cache_file = home_dir / ".javelin" / "cache.json"
-    
+
     if not cache_file.exists():
         print("❌ Not authenticated. Please run 'javelin auth' first.")
         sys.exit(1)
-        
+
     try:
         with open(cache_file) as f:
             cache = json.load(f)
         # Check memberships
-        memberships = cache.get('memberships', {}).get('data', [])
+        memberships = cache.get("memberships", {}).get("data", [])
         for membership in memberships:
-            if membership.get('role') == 'org:superadmin':
+            if membership.get("role") == "org:superadmin":
                 return True
-                
+
         print("❌ Permission denied: Javelin CLI requires superadmin privileges.")
         print("Please contact your administrator for access.")
         sys.exit(1)
-            
+
     except Exception as e:
         print(f"❌ Error reading credentials: {e}")
         sys.exit(1)
@@ -98,7 +97,10 @@ def main():
     parser = argparse.ArgumentParser(
         description="The CLI for Javelin.",
         formatter_class=argparse.RawTextHelpFormatter,
-        epilog="See https://docs.getjavelin.io/docs/javelin-python/cli for more detailed documentation.",
+        epilog=(
+            "See https://docs.getjavelin.io/docs/javelin-python/cli for more "
+            "detailed documentation."
+        ),
     )
     parser.add_argument(
         "--version", action="version", version=f"Javelin CLI v{package_version}"
@@ -108,9 +110,13 @@ def main():
 
     # Auth command
     auth_parser = subparsers.add_parser("auth", help="Authenticate with Javelin.")
-    auth_parser.add_argument("--force", action="store_true", help="Force re-authentication, overriding existing credentials")
-    auth_parser.set_defaults(func=authenticate)  
-    #aispm CRUD 
+    auth_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force re-authentication, overriding existing credentials",
+    )
+    auth_parser.set_defaults(func=authenticate)
+
     # AISPM commands
     aispm_parser = subparsers.add_parser("aispm", help="Manage AISPM functionality")
     aispm_subparsers = aispm_parser.add_subparsers()
@@ -122,54 +128,57 @@ def main():
     customer_create = customer_subparsers.add_parser("create", help="Create customer")
     customer_create.add_argument("--name", required=True, help="Customer name")
     customer_create.add_argument("--description", help="Customer description")
-    customer_create.add_argument("--metrics-interval", default="5m", help="Metrics interval")
-    customer_create.add_argument("--security-interval", default="1m", help="Security interval")
+    customer_create.add_argument(
+        "--metrics-interval", default="5m", help="Metrics interval"
+    )
+    customer_create.add_argument(
+        "--security-interval", default="1m", help="Security interval"
+    )
     customer_create.set_defaults(func=create_customer)
 
     customer_get = customer_subparsers.add_parser("get", help="Get customer details")
     customer_get.set_defaults(func=get_customer)
 
-
     # Cloud config commands
-    config_parser = aispm_subparsers.add_parser("config", help="Manage cloud configurations")
+    config_parser = aispm_subparsers.add_parser(
+        "config", help="Manage cloud configurations"
+    )
     config_subparsers = config_parser.add_subparsers()
 
     aws_parser = config_subparsers.add_parser("aws", help="Configure AWS")
-
     azure_parser = config_subparsers.add_parser("azure", help="Configure Azure")
-    
-    #azure_parser.add_argument("--config", type=str, required=True, help="Azure config JSON")
-    #azure_parser.set_defaults(func=configure_azure)
 
-    
     aws_subparsers = aws_parser.add_subparsers()
-
-    # GET AWS Config
     aws_get_parser = aws_subparsers.add_parser("get", help="Get AWS configuration")
     aws_get_parser.set_defaults(func=get_aws_config)
 
-    # Existing AWS Config (for creating)
-    aws_config_parser = aws_subparsers.add_parser("create", help="Configure AWS")
-    aws_config_parser.add_argument("--config", type=str, required=True, help="AWS config JSON")
-    aws_config_parser.set_defaults(func=configure_aws)
+    aws_create_parser = aws_subparsers.add_parser("create", help="Configure AWS")
+    aws_create_parser.add_argument(
+        "--config", type=str, required=True, help="AWS config JSON"
+    )
+    aws_create_parser.set_defaults(func=configure_aws)
 
-    aws_delete_parser = aws_subparsers.add_parser("delete", help="Delete AWS configuration")
-    aws_delete_parser.add_argument("--name", type=str, required=True, help="Name of AWS configuration to delete")
+    aws_delete_parser = aws_subparsers.add_parser(
+        "delete", help="Delete AWS configuration"
+    )
+    aws_delete_parser.add_argument(
+        "--name", type=str, required=True, help="Name of AWS configuration to delete"
+    )
     aws_delete_parser.set_defaults(func=delete_aws_config)
 
-    azure_subparsers = azure_parser.add_subparsers(dest='azure_command')
-
-# Get Azure Config
-    azure_get_parser = azure_subparsers.add_parser("get", help="Get Azure configuration")
+    azure_subparsers = azure_parser.add_subparsers(dest="azure_command")
+    azure_get_parser = azure_subparsers.add_parser(
+        "get", help="Get Azure configuration"
+    )
     azure_get_parser.set_defaults(func=get_azure_config)
 
-    # Create Azure Config
     azure_create_parser = azure_subparsers.add_parser("create", help="Configure Azure")
-    azure_create_parser.add_argument("--config", type=str, required=True, help="Azure config JSON")
+    azure_create_parser.add_argument(
+        "--config", type=str, required=True, help="Azure config JSON"
+    )
     azure_create_parser.set_defaults(func=configure_azure)
 
-
-    # Usage metrics 
+    # Usage metrics
     usage_parser = aispm_subparsers.add_parser("usage", help="Get usage metrics")
     usage_parser.add_argument("--provider", help="Cloud provider")
     usage_parser.add_argument("--account", help="Cloud account name")
@@ -180,14 +189,17 @@ def main():
     # Alerts
     alerts_parser = aispm_subparsers.add_parser("alerts", help="Get alerts")
     alerts_parser.add_argument("--provider", help="Cloud provider")
-    alerts_parser.add_argument("--account", help="Cloud account name") 
+    alerts_parser.add_argument("--account", help="Cloud account name")
     alerts_parser.add_argument("--model", help="Model ID")
     alerts_parser.add_argument("--region", help="Region")
     alerts_parser.set_defaults(func=get_alerts)
     # Gateway CRUD
     gateway_parser = subparsers.add_parser(
         "gateway",
-        help="Manage gateways: create, list, update, and delete gateways for routing requests.",
+        help=(
+            "Manage gateways: create, list, update, and delete gateways for "
+            "routing requests."
+        ),
     )
     gateway_subparsers = gateway_parser.add_subparsers()
 
@@ -239,7 +251,10 @@ def main():
     # Provider CRUD
     provider_parser = subparsers.add_parser(
         "provider",
-        help="Manage model providers: configure and manage large language model providers.",
+        help=(
+            "Manage model providers: configure and manage large language model "
+            "providers."
+        ),
     )
     provider_subparsers = provider_parser.add_subparsers()
 
@@ -297,7 +312,10 @@ def main():
     # Route CRUD
     route_parser = subparsers.add_parser(
         "route",
-        help="Manage routing rules: define and control the routing logic for handling requests.",
+        help=(
+            "Manage routing rules: define and control the routing logic for "
+            "handling requests."
+        ),
     )
     route_subparsers = route_parser.add_subparsers()
 
@@ -355,7 +373,10 @@ def main():
     # Secret CRUD
     secret_parser = subparsers.add_parser(
         "secret",
-        help="Manage API secrets: securely handle and manage API keys and credentials for access control.",
+        help=(
+            "Manage API secrets: securely handle and manage API keys and "
+            "credentials for access control."
+        ),
     )
     secret_subparsers = secret_parser.add_subparsers()
 
@@ -409,7 +430,10 @@ def main():
     # Template CRUD
     template_parser = subparsers.add_parser(
         "template",
-        help="Manage templates: configure and manage templates for sensitive data protection.",
+        help=(
+            "Manage templates: configure and manage templates for sensitive "
+            "data protection."
+        ),
     )
     template_subparsers = template_parser.add_subparsers()
 
@@ -471,7 +495,7 @@ def main():
     
 
     args = parser.parse_args()
-    
+
     if hasattr(args, "func"):
         # Skip permission check for auth command
         if args.func != authenticate:
@@ -490,9 +514,8 @@ def authenticate(args):
         print("✅ User is already authenticated!")
         print("Use --force to re-authenticate and override existing cache.")
         return
-    
+
     default_url = "https://dev.highflame.dev/"
-    
     print("   O")
     print("  /|\\")
     print("  / \\    ========> Welcome to Javelin! 🚀")
@@ -500,7 +523,7 @@ def authenticate(args):
     print("Press Enter to open the default login URL in your browser...")
     print(f"Default URL: {default_url}")
     print("Or enter a new URL (leave blank to use the default): ", end="")
-    
+
     new_url = input().strip()
     url_to_open = new_url if new_url else default_url
 
@@ -508,14 +531,14 @@ def authenticate(args):
 
     redirect_uri = f"http://localhost:{port}"
     encoded_redirect = urllib.parse.quote(redirect_uri)
-    
+
     url_to_open = f"{url_to_open}sign-in?localhost_url={encoded_redirect}&cli=1"
 
     print(f"\n🚀 Opening {url_to_open} in your browser...")
     webbrowser.open(url_to_open)
 
     print("\n⚡ Waiting for authentication... (Server is running)")
-    
+
     server_thread.join()
 
     if cache_file.exists():
@@ -527,14 +550,15 @@ def authenticate(args):
 def start_local_server():
     # Find an available port
     port = random.randint(8000, 9000)
-    
+
     class AuthHandler(http.server.SimpleHTTPRequestHandler):
         def log_message(self, format, *args):
             pass
+
         def end_headers(self):
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
             super().end_headers()
 
         def do_OPTIONS(self):
@@ -544,20 +568,22 @@ def start_local_server():
         def do_GET(self):
             query = urllib.parse.urlparse(self.path).query
             params = urllib.parse.parse_qs(query)
-            
-            if 'secrets' in params:
-                secrets = params['secrets'][0]
+
+            if "secrets" in params:
+                secrets = params["secrets"][0]
                 store_credentials(secrets)
                 self.send_response(200)
-                self.send_header('Content-type', 'text/html')
+                self.send_header("Content-type", "text/html")
                 self.end_headers()
-                self.wfile.write(b"Authentication successful. You can close this window.")
-                
+                self.wfile.write(
+                    b"Authentication successful. You can close this window."
+                )
+
                 # Shutdown the server
                 threading.Thread(target=self.server.shutdown).start()
             else:
                 self.send_response(400)
-                self.send_header('Content-type', 'text/html')
+                self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(b"Invalid request. Missing 'secrets' parameter.")
 
@@ -568,7 +594,7 @@ def start_local_server():
 
     server_thread = threading.Thread(target=run_server)
     server_thread.start()
-    
+
     return server_thread, port
 
 
@@ -576,9 +602,9 @@ def store_credentials(secrets):
     home_dir = Path.home()
     javelin_dir = home_dir / ".javelin"
     javelin_dir.mkdir(exist_ok=True)
-    
+
     cache_file = javelin_dir / "cache.json"
-    
+
     try:
         cache_data = json.loads(secrets)
         with open(cache_file, "w") as f:
