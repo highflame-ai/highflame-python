@@ -1,7 +1,4 @@
-from typing import List
-
 import httpx
-
 from javelin_sdk.exceptions import (
     BadRequest,
     InternalServerError,
@@ -42,15 +39,29 @@ class SecretService:
         elif response.status_code != 200:
             raise InternalServerError(response=response)
 
-    def create_secret(self, secret: Secret) -> str:
+    def create_secret(self, secret) -> str:
+        if not isinstance(secret, Secret):
+            secret = Secret.model_validate(secret)
         response = self.client._send_request_sync(
-            Request(method=HttpMethod.POST, secret=secret.name, data=secret.dict())
+            Request(
+                method=HttpMethod.POST,
+                secret=secret.api_key,
+                data=secret.dict(),
+                provider=secret.provider_name,
+            )
         )
         return self._process_secret_response_ok(response)
 
-    async def acreate_secret(self, secret: Secret) -> str:
+    async def acreate_secret(self, secret) -> str:
+        if not isinstance(secret, Secret):
+            secret = Secret.model_validate(secret)
         response = await self.client._send_request_async(
-            Request(method=HttpMethod.POST, secret=secret.name, data=secret.dict())
+            Request(
+                method=HttpMethod.POST,
+                secret=secret.api_key,
+                data=secret.dict(),
+                provider=secret.provider_name,
+            )
         )
         return self._process_secret_response_ok(response)
 
@@ -66,7 +77,7 @@ class SecretService:
         )
         return self._process_secret_response(response)
 
-    def list_secrets(self) -> List[Secret]:
+    def list_secrets(self) -> Secrets:
         response = self.client._send_request_sync(
             Request(method=HttpMethod.GET, secret="###")
         )
@@ -79,7 +90,7 @@ class SecretService:
         except ValueError:
             return Secrets(secrets=[])
 
-    async def alist_secrets(self) -> List[Secret]:
+    async def alist_secrets(self) -> Secrets:
         response = await self.client._send_request_async(
             Request(method=HttpMethod.GET, secret="###")
         )
@@ -93,21 +104,24 @@ class SecretService:
         except ValueError:
             return Secrets(secrets=[])
 
-    def update_secret(self, secret: Secret) -> str:
+    def update_secret(self, secret) -> str:
+        if not isinstance(secret, Secret):
+            secret = Secret.model_validate(secret)
         # Fields that cannot be updated
         restricted_fields = [
             "api_key",
             "api_key_secret_key_javelin",
             "provider_name",
+            "api_key_secret_key",
         ]
 
-        ## Get the current secret
-        current_secret = self.get_secret(secret.api_key, secret.provider_name)
+        # Get the current secret
+        if secret.api_key and secret.provider_name:
+            current_secret = self.get_secret(secret.api_key, secret.provider_name)
 
-        ## Compare the restricted fields of current secret with the new secret
+        # Compare the restricted fields of current secret with the new secret
         for field in restricted_fields:
             try:
-                # if current_secret[field] != secret[field]:
                 if getattr(current_secret, field) != getattr(secret, field):
                     raise ValueError(f"Cannot update restricted field: {field}")
             except KeyError:
@@ -116,14 +130,22 @@ class SecretService:
                 raise exc
 
         response = self.client._send_request_sync(
-            Request(method=HttpMethod.PUT, secret=secret.api_key, data=secret.dict(), provider=secret.provider_name)
+            Request(
+                method=HttpMethod.PUT,
+                secret=secret.api_key,
+                data=secret.dict(exclude_none=True),
+                provider=secret.provider_name,
+            )
         )
 
-        ## Reload the secret
-        self.reload_secret(secret.api_key)
+        # Reload the secret
+        if secret.api_key:
+            self.reload_secret(secret.api_key)
         return self._process_secret_response_ok(response)
 
-    async def aupdate_secret(self, secret: Secret) -> str:
+    async def aupdate_secret(self, secret) -> str:
+        if not isinstance(secret, Secret):
+            secret = Secret.model_validate(secret)
         # Fields that cannot be updated
         restricted_fields = [
             "api_key",
@@ -132,14 +154,13 @@ class SecretService:
             "provider_config",
         ]
 
+        # Get the current secret
+        if secret.api_key and secret.provider_name:
+            current_secret = self.get_secret(secret.api_key, secret.provider_name)
 
-        ## Get the current secret
-        current_secret = self.get_secret(secret.api_key, secret.provider_name)
-
-        ## Compare the restricted fields of current secret with the new secret
+        # Compare the restricted fields of current secret with the new secret
         for field in restricted_fields:
             try:
-                # if current_secret[field] != secret[field]:
                 if getattr(current_secret, field) != getattr(secret, field):
                     raise ValueError(f"Cannot update restricted field: {field}")
             except KeyError:
@@ -148,37 +169,52 @@ class SecretService:
                 raise exc
 
         response = await self.client._send_request_async(
-            Request(method=HttpMethod.PUT, secret=secret.api_key, data=secret.dict(), provider=secret.provider_name)
+            Request(
+                method=HttpMethod.PUT,
+                secret=secret.api_key,
+                data=secret.dict(exclude_none=True),
+                provider=secret.provider_name,
+            )
         )
 
-        ## Reload the secret
-        self.areload_secret(secret.api_key)
+        # Reload the secret
+        if secret.api_key:
+            await self.areload_secret(secret.api_key)
         return self._process_secret_response_ok(response)
 
     def delete_secret(self, secret_name: str, provider_name: str) -> str:
         response = self.client._send_request_sync(
-            Request(method=HttpMethod.DELETE, secret=secret_name, provider=provider_name)
+            Request(
+                method=HttpMethod.DELETE, secret=secret_name, provider=provider_name
+            )
         )
 
-        ## Reload the secret
+        # Reload the secret
         self.reload_secret(secret_name=secret_name)
         return self._process_secret_response_ok(response)
 
     async def adelete_secret(self, secret_name: str, provider_name: str) -> str:
         response = await self.client._send_request_async(
-            Request(method=HttpMethod.DELETE, secret=secret_name, provider=provider_name)
+            Request(
+                method=HttpMethod.DELETE, secret=secret_name, provider=provider_name
+            )
         )
 
-        ## Reload the secret
-        self.areload_secret(secret_name=secret_name)
+        # Reload the secret
+        await self.areload_secret(secret_name=secret_name)
         return self._process_secret_response_ok(response)
-    
+
     def reload_secret(self, secret_name: str) -> str:
         """
         Reload a secret
         """
         response = self.client._send_request_sync(
-            Request(method=HttpMethod.POST, secret=f"{secret_name}/reload", data="", is_reload=True)
+            Request(
+                method=HttpMethod.POST,
+                secret=f"{secret_name}/reload",
+                data={},
+                is_reload=True,
+            )
         )
         return response
 
@@ -187,6 +223,11 @@ class SecretService:
         Reload a secret in an asynchronous way
         """
         response = await self.client._send_request_async(
-            Request(method=HttpMethod.POST, secret=f"{secret_name}/reload", data="", is_reload=True)
+            Request(
+                method=HttpMethod.POST,
+                secret=f"{secret_name}/reload",
+                data={},
+                is_reload=True,
+            )
         )
         return response

@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Any, Dict
 
 import dotenv
 
@@ -28,7 +27,7 @@ def pretty_print(obj):
 
 def main():
     config = JavelinConfig(
-        base_url="https://api-dev.javelin.live",
+        base_url=os.getenv("JAVELIN_BASE_URL"),
         javelin_api_key=javelin_api_key,
         javelin_virtualapikey=javelin_virtualapikey,
         llm_api_key=llm_api_key,

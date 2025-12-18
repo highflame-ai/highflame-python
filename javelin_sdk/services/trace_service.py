@@ -1,7 +1,6 @@
-from typing import List
+from typing import Any
 
 import httpx
-
 from javelin_sdk.exceptions import (
     BadRequest,
     InternalServerError,
@@ -9,7 +8,7 @@ from javelin_sdk.exceptions import (
     TraceNotFoundError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request, Template, Templates
+from javelin_sdk.models import HttpMethod, Request, Template
 
 
 class TraceService:
@@ -39,7 +38,7 @@ class TraceService:
         elif response.status_code != 200:
             raise InternalServerError(response=response)
 
-    def get_traces(self) -> any:
+    def get_traces(self) -> Any:
         request = Request(
             method=HttpMethod.GET,
             trace="traces",

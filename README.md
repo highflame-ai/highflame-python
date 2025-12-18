@@ -1,10 +1,11 @@
-## Javelin: an Enterprise-Scale, Fast LLM Gateway
+[![Ask DeepWiki](https://deepwiki.com/badge.svg "DeepWiki Documentation")](https://deepwiki.com/getjavelin/javelin-python)
 
-[![Upload Python Package](https://github.com/getjavelin/javelin-python/actions/workflows/python-publish.yml/badge.svg?branch=main)](https://github.com/getjavelin/javelin-python/actions/workflows/python-publish.yml)
+## Javelin: an Enterprise-Scale, Fast LLM Gateway/Edge
 
 This is the Python client package for Javelin.
 
-For more information about Javelin, see https://getjavelin.io  
+For more information about Javelin, see https://getjavelin.com
+
 Javelin Documentation: https://docs.getjavelin.io
 
 ### Development
@@ -16,84 +17,92 @@ For local development, Please change `version = "RELEASE_VERSION"` with any sema
 ### Installation
 
 ```python
-  pip install javelin_sdk
+  pip install javelin-sdk
 ```
 
-### Quick Start
+### Quick Start Guide
 
-```python
-from javelin_sdk import (
-    JavelinClient,
-    JavelinConfig,
-    Route,
-    NetworkError,
-    RouteNotFoundError,
-    UnauthorizedError,
-)
+## Development Setup
 
-import os, sys
+### Setting up Virtual Environment
 
-try:
-    javelin_api_key = os.getenv('JAVELIN_API_KEY')
-    javelin_virtualapikey = os.getenv('JAVELIN_VIRTUALAPIKEY') #optional
-    llm_api_key = os.getenv("OPENAI_API_KEY")
+#### Windows
 
-    config = JavelinConfig(
-        base_url="https://api-dev.javelin.live",
-        javelin_api_key=javelin_api_key,
-        javelin_virtualapikey=javelin_virtualapikey, #optional
-        llm_api_key=llm_api_key,
-    )
-    client = JavelinClient(config)
+```batch
+# Create virtual environment
+python -m venv venv
 
-    print('Successfully connected to Javelin Client')
+# Activate virtual environment
+venv\Scripts\activate
 
-except NetworkError as e:
-    print("Failed to create client: Network Error")
-    sys.exit()
-except UnauthorizedError as e:
-    print("Failed to create client: Unauthorized")
-    sys.exit()
-
-# Create a route object
-route_data = {
-    "name": "test_route_1",
-    "type": "chat",
-    "models": [
-        {
-            "name": "gpt-3.5-turbo",
-            "enabled": True,
-            "provider": "openai",
-            "suffix": "/v1/chat/completions",
-        }
-    ],
-    "config": {
-        "archive": True,
-        "organization": "myusers",
-        "retries": 3,
-        "rate_limit": 7,
-    },
-}
-
-route = Route.parse_obj(route_data)
-try:
-    client.create_route(route)
-except NetworkError as e:
-    print("Failed to create route: Network Error")
-
-query_data = {
-    "model": "gpt-3.5-turbo",
-    "messages": [
-        {"role": "system", "content": "You are a helpful assistant that translates English to French."},
-        {"role": "user", "content": "AI has the power to transform humanity and make the world a better place"},
-    ],
-    "temperature": 0.8,
-}
-
-# query the llm
-try:
-    response = client.query_route("test_route_1", query_data)
-except RouteNotFoundError as e:
-    print("Route Not Found")
-
+# Install dependencies
+pip install poetry
+poetry install
 ```
+
+#### macOS/Linux
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install poetry
+poetry install
+```
+
+### Building and Installing the SDK
+
+```bash
+# Uninstall any existing version
+pip uninstall javelin-sdk -y
+
+# Build the package
+poetry build
+
+# Install the newly built package
+pip install dist/javelin_sdk-<version>-py3-none-any.whl
+```
+
+## [Universal Endpoints](https://docs.getjavelin.io/docs/javelin-core/integration#unified-endpoints)
+
+Javelin provides universal endpoints that allow you to use a consistent interface across different LLM providers. Here are the main patterns:
+
+#### Azure OpenAI
+- [Basic Azure OpenAI integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/azure-universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/javelin_azureopenai_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/openai_compatible_univ_azure.py)
+
+#### Bedrock
+- [Basic Bedrock integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/bedrock_client_universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/javelin_bedrock_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/openai_compatible_univ_bedrock.py)
+
+#### Gemini
+- [Basic Gemini integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/gemini-universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/javelin_gemini_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/openai_compatible_univ_gemini.py)
+
+### Agent Examples
+- [CrewAI integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/agents/crewai_javelin.ipynb)
+- [LangGraph integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/agents/langgraph_javelin.ipynb)
+
+### Basic Examples
+- [Asynchronous example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/aexample.py)
+- [Synchronous example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/example.py)
+- [Drop-in replacement example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/drop_in_replacement.py)
+
+### Advanced Examples
+- [Document processing](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/document_processing.py)
+- [RAG implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/rag/javelin_rag_embeddings_demo.ipynb)
+
+## Additional Integration Patterns
+
+For more detailed examples and integration patterns, check out:
+
+- [Azure OpenAI Integration](https://docs.getjavelin.io/docs/javelin-core/integration#2-azure-openai-api-endpoints)
+- [AWS Bedrock Integration](https://docs.getjavelin.io/docs/javelin-core/integration#3-aws-bedrock-api-endpoints)
+- [Supported Language Models](https://docs.getjavelin.io/docs/javelin-core/supported-llms)

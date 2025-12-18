@@ -608,6 +608,7 @@ class EndpointType(str, Enum):
     CONVERSE_STREAM = "converse_stream"
     ALL = "all"
 
+
 class UnivModelConfig:
     def __init__(
         self,

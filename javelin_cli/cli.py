@@ -58,17 +58,6 @@ def check_permissions():
     if not cache_file.exists():
         print("❌ Not authenticated. Please run 'javelin auth' first.")
         sys.exit(1)
-    
-    return True # Skip role check
-
-#def check_permissions():
-    """Check if user has superadmin permissions"""
-    home_dir = Path.home()
-    cache_file = home_dir / ".javelin" / "cache.json"
-
-    if not cache_file.exists():
-        print("❌ Not authenticated. Please run 'javelin auth' first.")
-        sys.exit(1)
 
     try:
         with open(cache_file) as f:
@@ -491,8 +480,6 @@ def main():
         "--name", type=str, required=True, help="Name of the template to delete"
     )
     template_delete.set_defaults(func=delete_template)
-
-    
 
     args = parser.parse_args()
 

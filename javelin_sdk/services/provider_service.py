@@ -1,7 +1,6 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, Optional
 
 import httpx
-
 from javelin_sdk.exceptions import (
     BadRequest,
     InternalServerError,
@@ -10,7 +9,14 @@ from javelin_sdk.exceptions import (
     RateLimitExceededError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Provider, Providers, Request, Secrets, EndpointType
+from javelin_sdk.models import (
+    EndpointType,
+    HttpMethod,
+    Provider,
+    Providers,
+    Request,
+    Secrets,
+)
 
 
 class ProviderService:
@@ -52,20 +58,31 @@ class ProviderService:
         elif response.status_code != 200:
             raise InternalServerError(response=response)
 
-    def create_provider(self, provider: Provider) -> str:
-        self._validate_provider_name(provider.name)
+    def create_provider(self, provider) -> str:
+        if not isinstance(provider, Provider):
+            provider = Provider.model_validate(provider)
+        if provider.name:
+            self._validate_provider_name(provider.name)
         response = self.client._send_request_sync(
             Request(
-                method=HttpMethod.POST, provider=provider.name, data=provider.dict()
+                method=HttpMethod.POST,
+                provider=provider.name,
+                data=provider.dict(exclude_none=True),
             )
         )
         return self._process_provider_response_ok(response)
 
-    async def acreate_provider(self, provider: Provider) -> str:
-        self._validate_provider_name(provider.name)
+    async def acreate_provider(self, provider) -> str:
+        # Accepts dict or Provider instance
+        if not isinstance(provider, Provider):
+            provider = Provider.model_validate(provider)
+        if provider.name:
+            self._validate_provider_name(provider.name)
         response = await self.client._send_request_async(
             Request(
-                method=HttpMethod.POST, provider=provider.name, data=provider.dict()
+                method=HttpMethod.POST,
+                provider=provider.name,
+                data=provider.dict(exclude_none=True),
             )
         )
         return self._process_provider_response_ok(response)
@@ -82,7 +99,7 @@ class ProviderService:
         )
         return self._process_provider_response(response)
 
-    def list_providers(self) -> List[Provider]:
+    def list_providers(self) -> Providers:
         response = self.client._send_request_sync(
             Request(method=HttpMethod.GET, provider="###")
         )
@@ -95,7 +112,7 @@ class ProviderService:
         except ValueError:
             return Providers(providers=[])
 
-    async def alist_providers(self) -> List[Provider]:
+    async def alist_providers(self) -> Providers:
         response = await self.client._send_request_async(
             Request(method=HttpMethod.GET, provider="###")
         )
@@ -109,22 +126,26 @@ class ProviderService:
         except ValueError:
             return Providers(providers=[])
 
-    def update_provider(self, provider: Provider) -> str:
+    def update_provider(self, provider) -> str:
+        # Accepts dict or Provider instance
+        if not isinstance(provider, Provider):
+            provider = Provider.model_validate(provider)
         response = self.client._send_request_sync(
             Request(method=HttpMethod.PUT, provider=provider.name, data=provider.dict())
         )
-
-        ## reload the provider
-        self.reload_provider(provider.name)
+        if provider.name:
+            self.reload_provider(provider.name)
         return self._process_provider_response_ok(response)
 
-    async def aupdate_provider(self, provider: Provider) -> str:
+    async def aupdate_provider(self, provider) -> str:
+        # Accepts dict or Provider instance
+        if not isinstance(provider, Provider):
+            provider = Provider.model_validate(provider)
         response = await self.client._send_request_async(
             Request(method=HttpMethod.PUT, provider=provider.name, data=provider.dict())
         )
-
-        ## reload the provider
-        self.areload_provider(provider.name)
+        if provider.name:
+            await self.areload_provider(provider.name)
         return self._process_provider_response_ok(response)
 
     def delete_provider(self, provider_name: str) -> str:
@@ -133,7 +154,7 @@ class ProviderService:
             Request(method=HttpMethod.DELETE, provider=provider_name)
         )
 
-        ## reload the provider
+        # reload the provider
         self.reload_provider(provider_name=provider_name)
         return self._process_provider_response_ok(response)
 
@@ -143,12 +164,12 @@ class ProviderService:
             Request(method=HttpMethod.DELETE, provider=provider_name)
         )
 
-        ## reload the provider
-        self.areload_provider(provider_name=provider_name)
+        # reload the provider
+        await self.areload_provider(provider_name=provider_name)
         return self._process_provider_response_ok(response)
 
     async def alist_provider_secrets(self, provider_name: str) -> Secrets:
-        response = await self._send_request_async(
+        response = await self.client._send_request_async(
             Request(
                 method=HttpMethod.GET,
                 gateway="",
@@ -168,18 +189,18 @@ class ProviderService:
             return Secrets(secrets=[])
 
     def get_transformation_rules(
-        self, provider_name: str, model_name: str, endpoint: EndpointType = EndpointType.UNKNOWN
-    ) -> Dict[str, Any]:
+        self,
+        provider_name: str,
+        model_name: str,
+        endpoint: EndpointType = EndpointType.UNKNOWN,
+    ) -> Optional[Dict[str, Any]]:
         """Get transformation rules from the provider configuration"""
         try:
             response = self.client._send_request_sync(
                 Request(
                     method=HttpMethod.GET,
                     provider=provider_name,
-                    query_params={
-                        "model_name": model_name,
-                        "endpoint": endpoint.value
-                    },
+                    query_params={"model_name": model_name, "endpoint": endpoint.value},
                     is_transformation_rules=True,
                 )
             )
@@ -193,8 +214,11 @@ class ProviderService:
             return None
 
     async def aget_transformation_rules(
-        self, provider_name: str, model_name: str, endpoint: EndpointType = EndpointType.UNKNOWN
-    ) -> Dict[str, Any]:
+        self,
+        provider_name: str,
+        model_name: str,
+        endpoint: EndpointType = EndpointType.UNKNOWN,
+    ) -> Optional[Dict[str, Any]]:
         """Get transformation rules from the provider configuration asynchronously"""
         try:
             response = await self.client._send_request_async(
@@ -202,10 +226,7 @@ class ProviderService:
                     method=HttpMethod.GET,
                     provider=provider_name,
                     route="transformation-rules",
-                    query_params={
-                        "model_name": model_name,
-                        "endpoint": endpoint.value
-                    }
+                    query_params={"model_name": model_name, "endpoint": endpoint.value},
                 )
             )
 
@@ -222,7 +243,12 @@ class ProviderService:
         Reload a provider
         """
         response = self.client._send_request_sync(
-            Request(method=HttpMethod.POST, provider=f"{provider_name}/reload", data="", is_reload=True)
+            Request(
+                method=HttpMethod.POST,
+                provider=f"{provider_name}/reload",
+                data={},
+                is_reload=True,
+            )
         )
         return response
 
@@ -231,6 +257,11 @@ class ProviderService:
         Reload a provider in an asynchronous way
         """
         response = await self.client._send_request_async(
-            Request(method=HttpMethod.POST, provider=f"{provider_name}/reload", data="", is_reload=True)
+            Request(
+                method=HttpMethod.POST,
+                provider=f"{provider_name}/reload",
+                data={},
+                is_reload=True,
+            )
         )
         return response

@@ -98,6 +98,8 @@ def get_javelin_client_aispm():
         client._aispm_userrole = "org:superadmin"
 
     return client
+)
+from pydantic import ValidationError
 
 
 def get_javelin_client():
