@@ -115,7 +115,6 @@ class JavelinClient:
 
         self.aispm = AISPMService(self)
 
-
     @property
     def client(self):
         if self._client is None:
@@ -966,7 +965,7 @@ class JavelinClient:
         )
 
         headers = {**self._headers, **(request.headers or {})}
-        
+
         # For AISPM requests: if account-id auth is used, do not send API key.
         if (
             request.route
@@ -974,14 +973,12 @@ class JavelinClient:
             and "x-javelin-accountid" in headers
         ):
             headers.pop("x-javelin-apikey", None)
-        
+
         return url, headers
 
     def _send_request_sync(self, request: Request) -> httpx.Response:
-        response = self._core_send_request(self.client, request) 
+        response = self._core_send_request(self.client, request)
         return response
-
-
 
     async def _send_request_async(self, request: Request) -> httpx.Response:
         return await self._core_send_request(self.aclient, request)

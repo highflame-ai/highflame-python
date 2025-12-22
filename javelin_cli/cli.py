@@ -49,7 +49,6 @@ from javelin_cli._internal.commands import (
 )
 
 
-
 def check_permissions():
     """Check if user has permissions"""
     home_dir = Path.home()

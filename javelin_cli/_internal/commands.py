@@ -9,7 +9,6 @@ from javelin_sdk.exceptions import (
 )
 from javelin_sdk.models import (
     AWSConfig,
-    AlertResponse,
     Gateway,
     GatewayConfig,
     JavelinConfig,
@@ -24,7 +23,6 @@ from javelin_sdk.models import (
     Template,
     TemplateConfig,
     AzureConfig,
-    UsageResponse,
 )
 from pydantic import ValidationError
 
@@ -72,7 +70,8 @@ def get_javelin_client_aispm():
 
     role_arn = selected_gateway.get("role_arn")
 
-    # Extract account_id from role ARN if still not found (format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME)
+    # Extract account_id from role ARN if still not found
+    # Format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME
     if role_arn and not account_id:
         try:
             parts = role_arn.split(":")
@@ -98,8 +97,6 @@ def get_javelin_client_aispm():
         client._aispm_userrole = "org:superadmin"
 
     return client
-)
-from pydantic import ValidationError
 
 
 def get_javelin_client():
@@ -204,8 +201,8 @@ def configure_aws(args):
         client = get_javelin_client_aispm()
         config = json.loads(args.config)
         configs = [AWSConfig(**config)]
-        result = client.aispm.configure_aws(configs)
-        print(f"AWS configuration created successfully.")
+        client.aispm.configure_aws(configs)
+        print("AWS configuration created successfully.")
     except Exception as e:
         print(f"Error configuring AWS: {e}")
 
@@ -257,8 +254,8 @@ def configure_azure(args):
         client = get_javelin_client_aispm()
         config = json.loads(args.config)
         configs = [AzureConfig(**config)]
-        result = client.aispm.configure_azure(configs)
-        print(f"Azure configuration created successfully.")
+        client.aispm.configure_azure(configs)
+        print("Azure configuration created successfully.")
     except Exception as e:
         print(f"Error configuring Azure: {e}")
 
