@@ -8,9 +8,11 @@ from javelin_sdk.exceptions import (
     UnauthorizedError,
 )
 from javelin_sdk.models import (
+    AWSConfig,
     Gateway,
     GatewayConfig,
     JavelinConfig,
+    Customer,
     Model,
     Provider,
     ProviderConfig,
@@ -20,8 +22,81 @@ from javelin_sdk.models import (
     Secrets,
     Template,
     TemplateConfig,
+    AzureConfig,
 )
 from pydantic import ValidationError
+
+
+def get_javelin_client_aispm():
+    # Path to cache.json file
+    home_dir = Path.home()
+    json_file_path = home_dir / ".javelin" / "cache.json"
+
+    # Load cache.json
+    if not json_file_path.exists():
+        raise FileNotFoundError(f"Configuration file not found: {json_file_path}")
+
+    with open(json_file_path, "r") as json_file:
+        cache_data = json.load(json_file)
+
+    # Retrieve the list of gateways
+    gateways = (
+        cache_data.get("memberships", {})
+        .get("data", [{}])[0]
+        .get("organization", {})
+        .get("public_metadata", {})
+        .get("Gateways", [])
+    )
+    if not gateways:
+        raise ValueError("No gateways found in the configuration.")
+
+    # Automatically select the first gateway (index 0)
+    selected_gateway = gateways[0]
+    base_url = selected_gateway["base_url"]
+
+    # Get organization metadata (where account_id might be stored)
+    organization = (
+        cache_data.get("memberships", {}).get("data", [{}])[0].get("organization", {})
+    )
+    org_metadata = organization.get("public_metadata", {})
+
+    # Get account_id from multiple possible locations (in order of preference):
+    # 1. Gateway's account_id field
+    # 2. Organization's public_metadata account_id
+    # 3. Extract from role_arn if provided
+    account_id = selected_gateway.get("account_id")
+    if not account_id:
+        account_id = org_metadata.get("account_id")
+
+    role_arn = selected_gateway.get("role_arn")
+
+    # Extract account_id from role ARN if still not found
+    # Format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME
+    if role_arn and not account_id:
+        try:
+            parts = role_arn.split(":")
+            if len(parts) >= 5 and parts[2] == "iam":
+                account_id = parts[4]
+        except (IndexError, AttributeError):
+            pass
+
+    javelin_api_key = selected_gateway.get("api_key_value", "placeholder")
+
+    # Initialize and return the JavelinClient
+    config = JavelinConfig(
+        base_url=base_url,
+        javelin_api_key=javelin_api_key,
+    )
+
+    client = JavelinClient(config)
+
+    # Store account_id in client for AISPM service to use
+    if account_id:
+        client._aispm_account_id = account_id
+        client._aispm_user = "test-user"
+        client._aispm_userrole = "org:superadmin"
+
+    return client
 
 
 def get_javelin_client():
@@ -84,6 +159,133 @@ def get_javelin_client():
     )
 
     return JavelinClient(config)
+
+
+def create_customer(args):
+    client = get_javelin_client_aispm()
+    customer = Customer(
+        name=args.name,
+        description=args.description,
+        metrics_interval=args.metrics_interval,
+        security_interval=args.security_interval,
+    )
+    return client.aispm.create_customer(customer)
+
+
+def get_customer(args):
+    """
+    Gets customer details using the AISPM service.
+    """
+    try:
+        client = get_javelin_client_aispm()
+        response = client.aispm.get_customer()
+
+        # Pretty print the response for CLI output
+        formatted_response = {
+            "name": response.name,
+            "description": response.description,
+            "metrics_interval": response.metrics_interval,
+            "security_interval": response.security_interval,
+            "status": response.status,
+            "created_at": response.created_at.isoformat(),
+            "modified_at": response.modified_at.isoformat(),
+        }
+
+        print(json.dumps(formatted_response, indent=2))
+    except Exception as e:
+        print(f"Error getting customer: {e}")
+
+
+def configure_aws(args):
+    try:
+        client = get_javelin_client_aispm()
+        config = json.loads(args.config)
+        configs = [AWSConfig(**config)]
+        client.aispm.configure_aws(configs)
+        print("AWS configuration created successfully.")
+    except Exception as e:
+        print(f"Error configuring AWS: {e}")
+
+
+def get_aws_config(args):
+    """
+    Gets AWS configurations using the AISPM service.
+    """
+    try:
+        client = get_javelin_client_aispm()
+        response = client.aispm.get_aws_configs()
+        # Simply print the JSON response
+        print(json.dumps(response, indent=2))
+
+    except Exception as e:
+        print(f"Error getting AWS configurations: {e}")
+
+
+# Add these functions to commands.py
+
+
+def delete_aws_config(args):
+    """
+    Deletes an AWS configuration.
+    """
+    try:
+        client = get_javelin_client_aispm()
+        client.aispm.delete_aws_config(args.name)
+        print(f"AWS configuration '{args.name}' deleted successfully.")
+    except Exception as e:
+        print(f"Error deleting AWS config: {e}")
+
+
+def get_azure_config(args):
+    """
+    Gets Azure configurations using the AISPM service.
+    """
+    try:
+        client = get_javelin_client_aispm()
+        response = client.aispm.get_azure_config()
+        # Format and print the response nicely
+        print(json.dumps(response, indent=2))
+    except Exception as e:
+        print(f"Error getting Azure config: {e}")
+
+
+def configure_azure(args):
+    try:
+        client = get_javelin_client_aispm()
+        config = json.loads(args.config)
+        configs = [AzureConfig(**config)]
+        client.aispm.configure_azure(configs)
+        print("Azure configuration created successfully.")
+    except Exception as e:
+        print(f"Error configuring Azure: {e}")
+
+
+def get_usage(args):
+    try:
+        client = get_javelin_client_aispm()
+        usage = client.aispm.get_usage(
+            provider=args.provider,
+            cloud_account=args.account,
+            model=args.model,
+            region=args.region,
+        )
+        print(json.dumps(usage.dict(), indent=2))
+    except Exception as e:
+        print(f"Error getting usage: {e}")
+
+
+def get_alerts(args):
+    try:
+        client = get_javelin_client_aispm()
+        alerts = client.aispm.get_alerts(
+            provider=args.provider,
+            cloud_account=args.account,
+            model=args.model,
+            region=args.region,
+        )
+        print(json.dumps(alerts.dict(), indent=2))
+    except Exception as e:
+        print(f"Error getting alerts: {e}")
 
 
 def create_gateway(args):

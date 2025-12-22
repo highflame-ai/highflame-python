@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum, auto
 from typing import Any, Dict, List, Optional
 
@@ -624,3 +625,145 @@ class UnivModelConfig:
         self.arn = arn
         self.api_version = api_version
         self.model_id = model_id
+
+
+# AISPM models
+
+
+class TimeRange(BaseModel):
+    start_time: str
+    end_time: str
+
+
+class BaseResponse(BaseModel):
+    message: Optional[str] = None
+
+
+class Customer(BaseModel):
+    name: str
+    description: Optional[str]
+    metrics_interval: str = "5m"
+    security_interval: str = "1m"
+    initial_scan: str = "24h"
+
+
+class CustomerResponse(Customer):
+    status: str
+    created_at: datetime
+    modified_at: datetime
+
+
+class BaseCloudConfig(BaseModel):
+    cloud_account_name: str
+    team: str
+
+
+class AWSConfig(BaseCloudConfig):
+    # Support either role-based auth or access-key auth (backend-dependent)
+    role_arn: Optional[str] = None
+    access_key_id: Optional[str] = None
+    secret_access_key: Optional[str] = None
+    region: Optional[str] = None
+
+
+class AzureConfig(BaseCloudConfig):
+    subscription_id: str
+    tenant_id: str
+    client_id: str
+    client_secret: str
+    location: str
+
+
+class GCPConfig(BaseCloudConfig):
+    project_id: str
+    service_account_key: str
+
+
+class CloudConfigResponse(BaseModel):
+    name: Optional[str] = Field(None, alias="cloud_account_name")
+    provider: str
+    status: str
+    created_at: datetime
+    modified_at: datetime
+
+
+class ModelMetrics(BaseModel):
+    latency_avg_ms: float
+    cost_per_request: float
+    tokens_per_request: float
+    attempt_count: int
+    failure_count: int
+    success_count: int
+    success_rate_pct: float
+    cost_total: float
+    request_count: int
+    token_count: int
+
+
+class CloudAccountUsage(BaseModel):
+    region_count: int
+    regions: List[str]
+    model_count: int
+    models: List[str]
+    model_metrics: ModelMetrics
+
+
+class UsageResponse(BaseModel):
+    cloud_provider: Dict[str, Any]
+    time_range: Optional[TimeRange] = None
+
+
+class AlertSeverity(str, Enum):
+    CRITICAL = "CRITICAL"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class AlertState(str, Enum):
+    ALARM = "ALARM"
+    OK = "OK"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+
+
+class AlertScope(str, Enum):
+    GLOBAL = "GLOBAL"
+    MODEL = "MODEL"
+    REGION = "REGION"
+
+
+class AlertMetrics(BaseModel):
+    total_alerts: int
+    active_alerts: int
+    resolved_alerts: int
+    critical_alerts: int
+    high_alerts: int
+    medium_alerts: int
+    low_alerts: int
+
+
+class Alert(BaseModel):
+    title: str
+    state: AlertState
+    state_reason: str
+    severity: AlertSeverity
+    scope: AlertScope
+    region: Optional[str]
+    model_id: Optional[str]
+    detected_at: datetime
+
+
+class CloudProviderAlerts(BaseModel):
+    cloud_account_count: int
+    cloud_accounts: List[str]
+    region_count: int
+    regions: List[str]
+    model_count: int
+    models: List[str]
+    alert_metrics: AlertMetrics
+    alerts: List[Alert]
+
+
+class AlertResponse(BaseModel):
+    cloud_provider: Dict[str, CloudProviderAlerts]
+    time_range: TimeRange
