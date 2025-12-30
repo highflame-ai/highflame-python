@@ -1,0 +1,17 @@
+langgraph>=0.2.0
+langchain-openai>=0.1.0
+langchain-google-genai>=2.0.10
+langchain>=0.2.0
+langchain-core>=0.2.0
+sqlalchemy>=2.0.0
+python-dotenv>=1.0.0
+ddgs>=1.0.0
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+streamlit>=1.28.0
+pandas>=2.0.0
+fastmcp>=2.0.0
+
