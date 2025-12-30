@@ -1,7 +1,7 @@
 """Database query helper functions."""
 
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, func
+from sqlalchemy import or_
 from typing import List, Optional
 from .models import (
     Customer,
@@ -30,7 +30,9 @@ def get_customer_by_phone(db: Session, phone: str) -> Optional[Customer]:
     return db.query(Customer).filter(Customer.phone == phone).first()
 
 
-def create_customer(db: Session, name: str, email: str, phone: Optional[str] = None) -> Customer:
+def create_customer(
+    db: Session, name: str, email: str, phone: Optional[str] = None
+) -> Customer:
     """Create a new customer."""
     customer = Customer(name=name, email=email, phone=phone)
     db.add(customer)
@@ -57,7 +59,12 @@ def create_order(
     status: OrderStatus = OrderStatus.PENDING,
 ) -> Order:
     """Create a new order."""
-    order = Order(customer_id=customer_id, order_number=order_number, total=total, status=status)
+    order = Order(
+        customer_id=customer_id,
+        order_number=order_number,
+        total=total,
+        status=status,
+    )
     db.add(order)
     db.commit()
     db.refresh(order)
@@ -92,7 +99,10 @@ def create_ticket(
 
 
 def update_ticket(
-    db: Session, ticket_id: int, status: Optional[TicketStatus] = None, notes: Optional[str] = None
+    db: Session,
+    ticket_id: int,
+    status: Optional[TicketStatus] = None,
+    notes: Optional[str] = None,
 ) -> Optional[Ticket]:
     """Update ticket status and add notes."""
     ticket = get_ticket_by_id(db, ticket_id)
@@ -114,7 +124,10 @@ def update_ticket(
 
 
 def search_knowledge_base(
-    db: Session, query: str, category: Optional[str] = None, limit: int = 5
+    db: Session,
+    query: str,
+    category: Optional[str] = None,
+    limit: int = 5,
 ) -> List[KnowledgeBase]:
     """Search knowledge base by keyword matching in title and content."""
     search_filter = or_(
@@ -146,10 +159,16 @@ def create_conversation(
 
 
 def update_conversation(
-    db: Session, conversation_id: int, messages: List[dict]
+    db: Session,
+    conversation_id: int,
+    messages: List[dict],
 ) -> Optional[Conversation]:
     """Update conversation messages."""
-    conversation = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+    conversation = (
+        db.query(Conversation)
+        .filter(Conversation.id == conversation_id)
+        .first()
+    )
     if not conversation:
         return None
 

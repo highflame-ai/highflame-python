@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from src.agent.database.setup import init_database, get_session
 from src.agent.database.queries import get_customer_by_email, get_order_by_number
 from src.agent.graph import get_agent
-from src.agent.llm import get_llm, get_available_providers
+from src.agent.llm import get_llm
 from langchain_core.messages import HumanMessage
 
 # Load environment variables
@@ -63,17 +63,6 @@ def test_order_lookup(setup_database):
         assert order.order_number == "ORD-001"
     finally:
         db.close()
-
-
-def test_llm_provider_detection():
-    """Test LLM provider detection based on API keys."""
-    providers = get_available_providers()
-    assert isinstance(providers, list)
-    # Should have at least one provider configured
-    if os.getenv("OPENAI_API_KEY"):
-        assert "openai" in providers
-    if os.getenv("GEMINI_API_KEY"):
-        assert "gemini" in providers
 
 
 def test_openai_llm_initialization():

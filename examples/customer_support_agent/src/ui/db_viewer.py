@@ -13,7 +13,7 @@ project_root = current_file.parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from src.agent.database.setup import get_database_path
+from src.agent.database.setup import get_database_path  # noqa: E402
 
 st.set_page_config(page_title="Database Viewer", page_icon="🗄️", layout="wide")
 
@@ -90,7 +90,10 @@ if selected_table:
     # Download button
     csv = df.to_csv(index=False)
     st.download_button(
-        label="📥 Download as CSV", data=csv, file_name=f"{selected_table}.csv", mime="text/csv"
+        label="📥 Download as CSV",
+        data=csv,
+        file_name=f"{selected_table}.csv",
+        mime="text/csv",
     )
 
 # Custom SQL query
@@ -118,14 +121,28 @@ st.subheader("📊 Predefined Queries")
 
 predefined_queries = {
     "All Customers": "SELECT * FROM customers ORDER BY created_at DESC LIMIT 20;",
-    "All Orders": "SELECT o.*, c.name as customer_name, c.email FROM orders o JOIN customers c ON o.customer_id = c.id ORDER BY o.created_at DESC LIMIT 20;",
-    "All Tickets": "SELECT t.*, c.name as customer_name, c.email FROM tickets t JOIN customers c ON t.customer_id = c.id ORDER BY t.created_at DESC LIMIT 20;",
+    "All Orders": (
+        "SELECT o.*, c.name as customer_name, c.email FROM orders o "
+        "JOIN customers c ON o.customer_id = c.id "
+        "ORDER BY o.created_at DESC LIMIT 20;"
+    ),
+    "All Tickets": (
+        "SELECT t.*, c.name as customer_name, c.email FROM tickets t "
+        "JOIN customers c ON t.customer_id = c.id "
+        "ORDER BY t.created_at DESC LIMIT 20;"
+    ),
     "Knowledge Base Articles": "SELECT * FROM knowledge_base ORDER BY created_at DESC;",
-    "Orders by Status": "SELECT status, COUNT(*) as count FROM orders GROUP BY status;",
-    "Tickets by Priority": "SELECT priority, COUNT(*) as count FROM tickets GROUP BY priority;",
-    "Tickets by Status": "SELECT status, COUNT(*) as count FROM tickets GROUP BY status;",
+    "Orders by Status": (
+        "SELECT status, COUNT(*) as count FROM orders GROUP BY status;"
+    ),
+    "Tickets by Priority": (
+        "SELECT priority, COUNT(*) as count FROM tickets GROUP BY priority;"
+    ),
+    "Tickets by Status": (
+        "SELECT status, COUNT(*) as count FROM tickets GROUP BY status;"
+    ),
     "Customer Order Summary": """
-        SELECT 
+        SELECT
             c.id,
             c.name,
             c.email,
@@ -146,7 +163,10 @@ for query_name, query in predefined_queries.items():
         try:
             result_df = pd.read_sql_query(query, conn)
             st.dataframe(result_df, use_container_width=True)
-            st.success(f"Query '{query_name}' executed. Returned {len(result_df)} rows.")
+            st.success(
+                f"Query '{query_name}' executed. "
+                f"Returned {len(result_df)} rows."
+            )
         except Exception as e:
             st.error(f"Query error: {e}")
 

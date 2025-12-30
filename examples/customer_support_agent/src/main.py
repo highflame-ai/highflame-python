@@ -11,8 +11,9 @@ from langchain_core.messages import HumanMessage
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.agent.database.setup import init_database
-from src.agent.graph import get_agent
+# Import after path setup
+from src.agent.database.setup import init_database  # noqa: E402
+from src.agent.graph import get_agent  # noqa: E402
 
 
 def load_environment():
@@ -25,10 +26,19 @@ def load_environment():
         load_dotenv()
 
     # Check for required environment variables
-    if not os.getenv("OPENAI_API_KEY"):
-        print("Error: OPENAI_API_KEY not found in environment variables.")
-        print("Please create a .env file with your OpenAI API key:")
-        print("OPENAI_API_KEY=your_key_here")
+    highflame_key = os.getenv("HIGHFLAME_API_KEY")
+    llm_api_key = os.getenv("LLM_API_KEY")
+
+    if not highflame_key:
+        print("Error: HIGHFLAME_API_KEY not found in environment variables.")
+        print("Please create a .env file with your Highflame API key:")
+        print("HIGHFLAME_API_KEY=your_key_here")
+        sys.exit(1)
+
+    if not llm_api_key:
+        print("Error: LLM_API_KEY not found in environment variables.")
+        print("Please create a .env file with your LLM API key:")
+        print("LLM_API_KEY=your_key_here")
         sys.exit(1)
 
 
@@ -53,11 +63,12 @@ def print_message(role: str, content: str, tool_calls=None):
     print(f"[{role.upper()}]")
     print(content)
     if tool_calls:
-        print(f"\n🔧 Tools Used: {', '.join(tc.get('tool', 'unknown') for tc in tool_calls)}")
+        tools_used = ', '.join(tc.get('tool', 'unknown') for tc in tool_calls)
+        print(f"\n🔧 Tools Used: {tools_used}")
     print()
 
 
-def run_test_conversations():
+def run_test_conversations():  # noqa: C901
     """Run automated test conversations to verify functionality."""
     print_separator()
     print("🧪 AUTOMATED TEST SUITE - Multi-Turn Conversations")
@@ -207,7 +218,11 @@ def run_test_conversations():
                             # Find the last AI message (non-tool-call message)
                             for msg in reversed(messages):
                                 if hasattr(msg, "content") and msg.content:
-                                    if not (hasattr(msg, "tool_calls") and msg.tool_calls):
+                                    has_tool_calls = (
+                                        hasattr(msg, "tool_calls") and
+                                        msg.tool_calls
+                                    )
+                                    if not has_tool_calls:
                                         response_text = msg.content
                                         break
 
@@ -219,7 +234,9 @@ def run_test_conversations():
                     response_text = "No response generated."
 
                 print_message(
-                    "assistant", response_text, tool_calls_list if tool_calls_list else None
+                    "assistant",
+                    response_text,
+                    tool_calls_list if tool_calls_list else None,
                 )
 
                 # Small delay between turns
@@ -237,13 +254,13 @@ def run_test_conversations():
             used_tools = [tc.get("tool") for tc in all_tool_calls]
             expected = scenario["expected_tools"]
             found = [tool for tool in expected if tool in used_tools]
-            print(f"\n✓ Tools Verification:")
+            print("\n✓ Tools Verification:")
             print(f"  Expected: {expected}")
             print(f"  Found: {found}")
             if len(found) == len(expected):
-                print(f"  ✅ All expected tools were used!")
+                print("  ✅ All expected tools were used!")
             else:
-                print(f"  ⚠️  Some expected tools were not used")
+                print("  ⚠️  Some expected tools were not used")
 
         print(f"\n✓ Test '{scenario['name']}' completed")
         time.sleep(1)
@@ -253,7 +270,7 @@ def run_test_conversations():
     print_separator()
 
 
-def run_conversation():
+def run_conversation():  # noqa: C901
     """Run interactive conversation loop with the agent."""
     print("\n" + "=" * 60)
     print("Customer Support Agent - Interactive Mode")
@@ -286,7 +303,10 @@ def run_conversation():
                 continue
 
             if user_input.lower() in ["quit", "exit", "q"]:
-                print("\nThank you for contacting customer support. Have a great day!")
+                print(
+                    "\nThank you for contacting customer support. "
+                    "Have a great day!"
+                )
                 break
 
             # Create human message
@@ -325,9 +345,10 @@ def run_conversation():
             if response_text:
                 print(response_text)
                 if tool_calls_list:
-                    print(
-                        f"\n🔧 Tools used: {', '.join(tc.get('tool', 'unknown') for tc in tool_calls_list)}"
+                    tools_used = ', '.join(
+                        tc.get('tool', 'unknown') for tc in tool_calls_list
                     )
+                    print(f"\n🔧 Tools used: {tools_used}")
             else:
                 print("I apologize, but I couldn't generate a response.")
 

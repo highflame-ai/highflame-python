@@ -1,7 +1,17 @@
 """SQLAlchemy models for the customer support database."""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, JSON, Enum
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Float,
+    DateTime,
+    ForeignKey,
+    Text,
+    JSON,
+    Enum,
+)
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 import enum
@@ -83,7 +93,9 @@ class Ticket(Base):
     subject = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     status = Column(Enum(TicketStatus), default=TicketStatus.OPEN, nullable=False)
-    priority = Column(Enum(TicketPriority), default=TicketPriority.MEDIUM, nullable=False)
+    priority = Column(
+        Enum(TicketPriority), default=TicketPriority.MEDIUM, nullable=False
+    )
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

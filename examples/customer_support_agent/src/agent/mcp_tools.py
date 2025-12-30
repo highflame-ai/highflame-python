@@ -35,22 +35,31 @@ async def call_mcp_tool_async(tool_name: str, **kwargs):
             if not result:
                 logger.error(f"MCP tool {tool_name} returned None result")
                 return "Error: Tool returned no result"
-            
+
             if not result.content:
                 logger.warning(f"MCP tool {tool_name} returned empty content")
                 return ""
-            
+
             if len(result.content) == 0:
-                logger.warning(f"MCP tool {tool_name} returned empty content list")
+                logger.warning(
+                    f"MCP tool {tool_name} returned empty content list"
+                )
                 return ""
-            
+
             first_content = result.content[0]
             if not hasattr(first_content, 'text'):
-                logger.error(f"MCP tool {tool_name} content missing text attribute")
-                return f"Error: Unexpected response format from tool {tool_name}"
-            
+                logger.error(
+                    f"MCP tool {tool_name} content missing text attribute"
+                )
+                return (
+                    f"Error: Unexpected response format from tool {tool_name}"
+                )
+
             response_text = first_content.text if first_content.text else ""
-            logger.debug(f"MCP tool {tool_name} returned response (length: {len(response_text)})")
+            logger.debug(
+                f"MCP tool {tool_name} returned response "
+                f"(length: {len(response_text)})"
+            )
             return response_text
     except Exception as e:
         logger.error(f"Error calling MCP tool {tool_name}: {e}", exc_info=True)
@@ -68,8 +77,12 @@ def call_mcp_tool(tool_name: str, **kwargs):
 class SearchKnowledgeBaseSchema(BaseModel):
     """Search knowledge base input schema."""
 
-    query: str = Field(..., description="The search query or keywords to search for")
-    category: Optional[str] = Field(None, description="Optional category to filter results")
+    query: str = Field(
+        ..., description="The search query or keywords to search for"
+    )
+    category: Optional[str] = Field(
+        None, description="Optional category to filter results"
+    )
 
 
 class GetKnowledgeBaseByCategorySchema(BaseModel):
@@ -81,8 +94,12 @@ class GetKnowledgeBaseByCategorySchema(BaseModel):
 class LookupOrderSchema(BaseModel):
     """Lookup order input schema."""
 
-    order_number: str = Field(..., description="The order number to look up (e.g., 'ORD-001')")
-    customer_id: Optional[int] = Field(None, description="Optional customer ID to verify")
+    order_number: str = Field(
+        ..., description="The order number to look up (e.g., 'ORD-001')"
+    )
+    customer_id: Optional[int] = Field(
+        None, description="Optional customer ID to verify"
+    )
 
 
 class GetOrderStatusSchema(BaseModel):
@@ -122,11 +139,14 @@ class CreateCustomerSchema(BaseModel):
 class CreateTicketSchema(BaseModel):
     """Create ticket input schema."""
 
-    customer_id: int = Field(..., description="The ID of the customer creating the ticket")
+    customer_id: int = Field(
+        ..., description="The ID of the customer creating the ticket"
+    )
     subject: str = Field(..., description="Brief subject line for the ticket")
     description: str = Field(..., description="Detailed description of the issue")
     priority: str = Field(
-        "medium", description="Priority level - 'low', 'medium', 'high', or 'urgent'"
+        "medium",
+        description="Priority level - 'low', 'medium', 'high', or 'urgent'",
     )
     order_id: Optional[int] = Field(
         None, description="Optional order ID if related to a specific order"
@@ -138,7 +158,10 @@ class UpdateTicketSchema(BaseModel):
 
     ticket_id: int = Field(..., description="The ID of the ticket to update")
     status: Optional[str] = Field(
-        None, description="New status - 'open', 'in_progress', 'resolved', or 'closed'"
+        None,
+        description=(
+            "New status - 'open', 'in_progress', 'resolved', or 'closed'"
+        ),
     )
     notes: Optional[str] = Field(None, description="Additional notes or updates")
 
@@ -158,16 +181,25 @@ def create_mcp_tools() -> List[StructuredTool]:
     # Knowledge Base Tools
     search_knowledge_base_tool = StructuredTool(
         name="search_knowledge_base_tool",
-        description="Search the knowledge base for information relevant to the customer's query.",
+        description=(
+            "Search the knowledge base for information relevant to the "
+            "customer's query."
+        ),
         args_schema=SearchKnowledgeBaseSchema,
-        func=lambda **kwargs: call_mcp_tool("search_knowledge_base_tool", **kwargs),
+        func=lambda **kwargs: call_mcp_tool(
+            "search_knowledge_base_tool", **kwargs
+        ),
     )
 
     get_knowledge_base_by_category_tool = StructuredTool(
         name="get_knowledge_base_by_category_tool",
-        description="Get all knowledge base articles in a specific category.",
+        description=(
+            "Get all knowledge base articles in a specific category."
+        ),
         args_schema=GetKnowledgeBaseByCategorySchema,
-        func=lambda **kwargs: call_mcp_tool("get_knowledge_base_by_category_tool", **kwargs),
+        func=lambda **kwargs: call_mcp_tool(
+            "get_knowledge_base_by_category_tool", **kwargs
+        ),
     )
 
     # Order Tools
@@ -202,9 +234,13 @@ def create_mcp_tools() -> List[StructuredTool]:
 
     get_customer_profile_tool = StructuredTool(
         name="get_customer_profile_tool",
-        description="Get full customer profile including order history and tickets.",
+        description=(
+            "Get full customer profile including order history and tickets."
+        ),
         args_schema=GetCustomerProfileSchema,
-        func=lambda **kwargs: call_mcp_tool("get_customer_profile_tool", **kwargs),
+        func=lambda **kwargs: call_mcp_tool(
+            "get_customer_profile_tool", **kwargs
+        ),
     )
 
     create_customer_tool = StructuredTool(

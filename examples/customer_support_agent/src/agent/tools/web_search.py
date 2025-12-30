@@ -1,8 +1,6 @@
 """Web search tool using DuckDuckGo."""
 
 from langchain_core.tools import tool
-from typing import Optional
-import os
 
 try:
     # Try new package name first

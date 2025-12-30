@@ -27,7 +27,8 @@ def send_email_smtp(
 
     if not smtp_username or not smtp_password:
         raise ValueError(
-            "SMTP credentials not configured. Set SMTP_USERNAME and SMTP_PASSWORD in .env"
+            "SMTP credentials not configured. "
+            "Set SMTP_USERNAME and SMTP_PASSWORD in .env"
         )
 
     try:

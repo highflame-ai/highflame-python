@@ -33,24 +33,32 @@ def get_llm(temperature: float = 0.8):
     route = os.getenv("HIGHFLAME_ROUTE", "").strip()
     model = os.getenv("MODEL", "").strip()
     llm_api_key = os.getenv("LLM_API_KEY", "").strip()
-    
+
     # Route is required
     if not route:
         logger.error("HIGHFLAME_ROUTE not set in environment variables")
-        raise ValueError("HIGHFLAME_ROUTE must be set (e.g., 'openai' or 'google')")
-    
+        raise ValueError(
+            "HIGHFLAME_ROUTE must be set (e.g., 'openai' or 'google')"
+        )
+
     # Model is required
     if not model:
         logger.error("MODEL not set in environment variables")
-        raise ValueError("MODEL must be set (e.g., 'gpt-4o-mini' or 'gemini-2.5-flash-lite')")
-    
+        raise ValueError(
+            "MODEL must be set (e.g., 'gpt-4o-mini' or "
+            "'gemini-2.5-flash-lite')"
+        )
+
     # LLM API key is required
     if not llm_api_key:
         logger.error("LLM_API_KEY not set in environment variables")
-        raise ValueError("LLM_API_KEY must be set (OpenAI API key for 'openai' route, Gemini API key for 'google' route)")
-    
+        raise ValueError(
+            "LLM_API_KEY must be set (OpenAI API key for 'openai' route, "
+            "Gemini API key for 'google' route)"
+        )
+
     logger.info(f"Initializing Highflame LLM - route: {route}, model: {model}")
-    
+
     # Highflame provides a unified OpenAI-compatible API for both OpenAI and Gemini
     return ChatOpenAI(
         model=model,

@@ -9,20 +9,26 @@ from typing import Optional
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from fastmcp import FastMCP
-from dotenv import load_dotenv
+from fastmcp import FastMCP  # noqa: E402
+from dotenv import load_dotenv  # noqa: E402
 
 # Load environment variables
 load_dotenv()
 
-import warnings
+import warnings  # noqa: E402
 # Suppress websockets deprecation warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets")
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="uvicorn.protocols.websockets")
+warnings.filterwarnings(
+    "ignore", category=DeprecationWarning, module="websockets"
+)
+warnings.filterwarnings(
+    "ignore",
+    category=DeprecationWarning,
+    module="uvicorn.protocols.websockets",
+)
 
 # Import database modules
-from src.agent.database.setup import get_session, init_database
-from src.agent.database.queries import (
+from src.agent.database.setup import get_session, init_database  # noqa: E402
+from src.agent.database.queries import (  # noqa: E402
     # Knowledge base
     search_knowledge_base,
     get_knowledge_base_by_category,
@@ -39,8 +45,8 @@ from src.agent.database.queries import (
     update_ticket as db_update_ticket,
     get_ticket_by_id,
 )
-from src.agent.database.models import TicketStatus, TicketPriority
-from src.utils.logger import get_logger
+from src.agent.database.models import TicketStatus, TicketPriority  # noqa: E402
+from src.utils.logger import get_logger  # noqa: E402
 
 logger = get_logger(__name__)
 
@@ -61,10 +67,10 @@ def search_knowledge_base_tool(query: str, category: Optional[str] = None) -> st
 
     Args:
         query: The search query or keywords to search for
-        category: Optional category to filter results (e.g., 'policies', 'shipping', 'account')
+        category: Optional category to filter results (e.g., 'policies', 'shipping', 'account')  # noqa: E501
 
     Returns:
-        A formatted string with relevant knowledge base articles, or a message if no results found.
+        A formatted string with relevant knowledge base articles, or a message if no results found.  # noqa: E501
     """
     logger.info(f"Searching knowledge base - query: {query}, category: {category}")
     db = get_session()
@@ -99,7 +105,7 @@ def get_knowledge_base_by_category_tool(category: str) -> str:
     Get all knowledge base articles in a specific category.
 
     Args:
-        category: The category to retrieve articles from (e.g., 'policies', 'shipping', 'account', 'orders', 'billing', 'support')
+        category: The category to retrieve articles from (e.g., 'policies', 'shipping', 'account', 'orders', 'billing', 'support')  # noqa: E501
 
     Returns:
         A formatted string with all articles in the category.
@@ -146,7 +152,7 @@ def lookup_order_tool(order_number: str, customer_id: Optional[int] = None) -> s
 
         # Verify customer if provided
         if customer_id and order.customer_id != customer_id:
-            return f"Error: Order '{order_number}' does not belong to customer {customer_id}."
+            return f"Error: Order '{order_number}' does not belong to customer {customer_id}."  # noqa: E501
 
         customer = get_customer_by_id(db, order.customer_id)
         customer_name = customer.name if customer else "Unknown"
@@ -235,7 +241,9 @@ def get_order_history_tool(customer_id: int) -> str:
 
 @mcp.tool()
 def lookup_customer_tool(
-    email: Optional[str] = None, phone: Optional[str] = None, customer_id: Optional[int] = None
+    email: Optional[str] = None,
+    phone: Optional[str] = None,
+    customer_id: Optional[int] = None,
 ) -> str:
     """
     Look up a customer by email, phone number, or customer ID.
@@ -313,7 +321,7 @@ def get_customer_profile_tool(customer_id: int) -> str:
         if orders:
             result += "Recent Orders:\n"
             for order in orders[:5]:  # Show last 5 orders
-                result += f"  - {order.order_number}: {order.status.value} (${order.total:.2f})\n"
+                result += f"  - {order.order_number}: {order.status.value} (${order.total:.2f})\n"  # noqa: E501
 
         result += "\n"
 
@@ -322,7 +330,7 @@ def get_customer_profile_tool(customer_id: int) -> str:
         if tickets:
             result += "Recent Tickets:\n"
             for ticket in tickets[:5]:  # Show last 5 tickets
-                result += f"  - Ticket #{ticket.id}: {ticket.subject} ({ticket.status.value})\n"
+                result += f"  - Ticket #{ticket.id}: {ticket.subject} ({ticket.status.value})\n"  # noqa: E501
 
         return result
     except Exception as e:
@@ -349,7 +357,7 @@ def create_customer_tool(name: str, email: str, phone: Optional[str] = None) -> 
         # Check if customer already exists
         existing = get_customer_by_email(db, email)
         if existing:
-            return f"Error: Customer with email '{email}' already exists (ID: {existing.id})"
+            return f"Error: Customer with email '{email}' already exists (ID: {existing.id})"  # noqa: E501
 
         customer = db_create_customer(db, name, email, phone)
 
@@ -384,7 +392,7 @@ def create_ticket_tool(
         customer_id: The ID of the customer creating the ticket
         subject: Brief subject line for the ticket
         description: Detailed description of the issue
-        priority: Priority level - 'low', 'medium', 'high', or 'urgent' (default: 'medium')
+        priority: Priority level - 'low', 'medium', 'high', or 'urgent' (default: 'medium')  # noqa: E501
         order_id: Optional order ID if the ticket is related to a specific order
 
     Returns:
@@ -406,7 +414,8 @@ def create_ticket_tool(
         }
         priority_enum = priority_map.get(priority.lower(), TicketPriority.MEDIUM)
 
-        ticket = db_create_ticket(db, customer_id, subject, description, priority_enum, order_id)
+        ticket = (
+            db_create_ticket(db, customer_id, subject, description, priority_enum, order_id))  # noqa: E501
 
         return (
             f"Support ticket created successfully!\n"
@@ -454,7 +463,7 @@ def update_ticket_tool(
             }
             status_enum = status_map.get(status.lower())
             if not status_enum:
-                return f"Error: Invalid status '{status}'. Valid values: open, in_progress, resolved, closed"
+                return f"Error: Invalid status '{status}'. Valid values: open, in_progress, resolved, closed"  # noqa: E501
 
         updated_ticket = db_update_ticket(db, ticket_id, status_enum, notes)
 
