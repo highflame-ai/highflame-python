@@ -72,12 +72,12 @@ jobs:
         shell: bash
         run: |-
           export RELEASE_VERSION=$(echo ${{ env.RELEASE_NAME }} | sed 's|^v||g')
-          if cat ${{ env.PY_VER_FILE }} | grep 'version = "RELEASE_VERSION"' ; then
-            sed -i "s|^version = \"RELEASE_VERSION\"|version = \"${RELEASE_VERSION}\"|g" ${{ env.PY_VER_FILE }}
-            cat ${file}
+          if [[ -f ${{ env.PY_VER_FILE }} ]] ; then
+            sed -i "s|^version = \".*\"|version = \"${RELEASE_VERSION}\"|g" ${{ env.PY_VER_FILE }}
+            cat ${{ env.PY_VER_FILE }}
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ${{ env.PY_VER_FILE }}"
           else
-            echo "Version entry format is wrong in the ${{ env.PY_VER_FILE }} file...!"
-            cat ${file}
+            echo "File not found ${{ env.PY_VER_FILE }}"
             exit 1
           fi
 

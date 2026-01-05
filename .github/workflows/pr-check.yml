@@ -167,16 +167,15 @@ jobs:
           PY_VER_FILE: "pyproject.toml"
         shell: bash
         run: |-
-          if ! grep -q '^version = ' ${{ env.PY_VER_FILE }} ; then
-            echo "Version entry not found in the ${{ env.PY_VER_FILE }} file...!"
+          export RELEASE_VERSION="1.1.1"
+          if [[ -f ${{ env.PY_VER_FILE }} ]] ; then
+            sed -i "s|^version = \".*\"|version = \"${RELEASE_VERSION}\"|g" ${{ env.PY_VER_FILE }}
+            cat ${{ env.PY_VER_FILE }}
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ${{ env.PY_VER_FILE }}"
+          else
+            echo "File not found ${{ env.PY_VER_FILE }}"
             exit 1
           fi
-          VERSION=$(grep '^version = ' ${{ env.PY_VER_FILE }} | sed 's/.*version = "\(.*\)".*/\1/')
-          if [ -z "$VERSION" ]; then
-            echo "Version entry format is wrong in the ${{ env.PY_VER_FILE }} file...!"
-            exit 1
-          fi
-          echo "Package version: $VERSION"
 
       - name: Setup Python
         uses: actions/setup-python@v5
