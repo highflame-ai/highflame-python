@@ -19,6 +19,7 @@ from javelin_sdk.services.route_service import RouteService
 from javelin_sdk.services.secret_service import SecretService
 from javelin_sdk.services.template_service import TemplateService
 from javelin_sdk.services.trace_service import TraceService
+from javelin_sdk.services.aispm_service import AISPMService
 from javelin_sdk.services.guardrails_service import GuardrailsService
 from javelin_sdk.tracing_setup import configure_span_exporter
 
@@ -112,9 +113,13 @@ class JavelinClient:
 
         self.original_methods = {}
 
+        self.aispm = AISPMService(self)
+
     @property
     def client(self):
         if self._client is None:
+            # Don't set headers at client level - they'll be added per-request
+            # This allows us to exclude x-api-key for AISPM requests
             self._client = httpx.Client(
                 base_url=self.base_url,
                 headers=self._headers,
@@ -125,8 +130,9 @@ class JavelinClient:
     @property
     def aclient(self):
         if self._aclient is None:
+            # Don't set headers at client level - they'll be added per-request
             self._aclient = httpx.AsyncClient(
-                base_url=self.base_url, headers=self._headers, timeout=API_TIMEOUT
+                base_url=self.base_url, timeout=API_TIMEOUT
             )
         return self._aclient
 
@@ -957,11 +963,22 @@ class JavelinClient:
             guardrail=request.guardrail,
             list_guardrails=request.list_guardrails,
         )
+
         headers = {**self._headers, **(request.headers or {})}
+
+        # For AISPM requests: if account-id auth is used, do not send API key.
+        if (
+            request.route
+            and request.route.startswith("v1/admin/aispm")
+            and "x-javelin-accountid" in headers
+        ):
+            headers.pop("x-javelin-apikey", None)
+
         return url, headers
 
     def _send_request_sync(self, request: Request) -> httpx.Response:
-        return self._core_send_request(self.client, request)
+        response = self._core_send_request(self.client, request)
+        return response
 
     async def _send_request_async(self, request: Request) -> httpx.Response:
         return await self._core_send_request(self.aclient, request)
@@ -999,6 +1016,14 @@ class JavelinClient:
         guardrail: Optional[str] = None,
         list_guardrails: bool = False,
     ) -> str:
+        # Handle AISPM routes: they use the route directly with base_url
+        if route_name and route_name.startswith("v1/admin/aispm"):
+            url = f"{self.config.base_url.rstrip('/')}/{route_name}"
+            if query_params:
+                query_string = "&".join(f"{k}={v}" for k, v in query_params.items())
+                url += f"?{query_string}"
+            return url
+
         url_parts = [self.base_url]
 
         # Determine the main URL path based on the primary resource type

@@ -162,21 +162,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setting up the Package Version
+      - name: Validate Package Version
         env:
           PY_VER_FILE: "pyproject.toml"
-          RELEASE_NAME: "v1.1.1"
         shell: bash
         run: |-
-          export RELEASE_VERSION=$(echo ${{ env.RELEASE_NAME }} | sed 's|^v||g')
-          if cat ${{ env.PY_VER_FILE }} | grep 'version = "RELEASE_VERSION"' ; then
-            sed -i "s|^version = \"RELEASE_VERSION\"|version = \"${RELEASE_VERSION}\"|g" ${{ env.PY_VER_FILE }}
-            cat ${file}
-          else
-            echo "Version entry format is wrong in the ${{ env.PY_VER_FILE }} file...!"
-            cat ${file}
+          if ! grep -q '^version = ' ${{ env.PY_VER_FILE }} ; then
+            echo "Version entry not found in the ${{ env.PY_VER_FILE }} file...!"
             exit 1
           fi
+          VERSION=$(grep '^version = ' ${{ env.PY_VER_FILE }} | sed 's/.*version = "\(.*\)".*/\1/')
+          if [ -z "$VERSION" ]; then
+            echo "Version entry format is wrong in the ${{ env.PY_VER_FILE }} file...!"
+            exit 1
+          fi
+          echo "Package version: $VERSION"
 
       - name: Setup Python
         uses: actions/setup-python@v5

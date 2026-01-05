@@ -5,11 +5,11 @@ description = "Python client for Highflame"
 authors = ["Sharath Rajasekar <sharath@highflame.com>"]
 readme = "README.md"
 license = "Apache-2.0"
+homepage = "https://getjavelin.com"
 packages = [
     { include = "javelin_cli" },
     { include = "javelin_sdk" },
 ]
-homepage = "https://getjavelin.com"
 
 [tool.poetry.scripts]
 javelin = "javelin_cli.cli:main"
