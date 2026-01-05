@@ -1,4 +1,4 @@
-name: Release Build - Javelin Python
+name: Release Build - Highflame Python
 
 on:
   release:
@@ -12,7 +12,7 @@ env:
   RELEASE_NAME: ${{ github.event.release.name }}
 
 jobs:
-  javelin-validate:
+  highflame-validate:
     permissions:
       contents: 'read'
     runs-on: ubuntu-24.04
@@ -52,9 +52,9 @@ jobs:
             exit 1
           fi
 
-  javelin-package:
+  highflame-package:
     needs:
-      - javelin-validate
+      - highflame-validate
     permissions:
       contents: 'read'
       id-token: 'write'
