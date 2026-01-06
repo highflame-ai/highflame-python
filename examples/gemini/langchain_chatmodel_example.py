@@ -8,10 +8,10 @@ dotenv.load_dotenv()
 model = init_chat_model(
     "gemini-1.5-flash",
     model_provider="openai",
-    base_url=f"{os.getenv('JAVELIN_BASE_URL')}/v1",
+    base_url=f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}/v1",
     extra_headers={
         "x-javelin-route": "google_univ",
-        "x-api-key": os.environ.get("JAVELIN_API_KEY"),
+        "x-api-key": os.environ.get("HIGHFLAME_API_KEY") or os.environ.get("JAVELIN_API_KEY"),
         "Authorization": f"Bearer {os.environ.get('GEMINI_API_KEY')}",
     },
 )

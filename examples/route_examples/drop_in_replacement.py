@@ -14,9 +14,9 @@ from javelin_sdk import (
 
 dotenv.load_dotenv()
 
-# Retrieve environment variables
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
-javelin_virtualapikey = os.getenv("JAVELIN_VIRTUALAPIKEY")
+# Retrieve environment variables (backward compatible: check HIGHFLAME_* first, fall back to JAVELIN_*)
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+javelin_virtualapikey = os.getenv("HIGHFLAME_VIRTUALAPIKEY") or os.getenv("JAVELIN_VIRTUALAPIKEY")
 llm_api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -124,7 +124,7 @@ def main():
 
     try:
         config = JavelinConfig(
-            base_url=os.getenv("JAVELIN_BASE_URL"),
+            base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
             javelin_api_key=javelin_api_key,
             javelin_virtualapikey=javelin_virtualapikey,
             llm_api_key=llm_api_key,

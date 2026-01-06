@@ -16,8 +16,8 @@ def print_response(provider: str, response: Dict[str, Any]) -> None:
 
 # Javelin client config
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
     llm_api_key=os.getenv("ANTHROPIC_API_KEY"),
     timeout=120,
 )

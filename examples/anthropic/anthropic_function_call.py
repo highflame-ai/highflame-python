@@ -11,8 +11,8 @@ load_dotenv()
 
 # Javelin Setup
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
 )
 client = JavelinClient(config)
 

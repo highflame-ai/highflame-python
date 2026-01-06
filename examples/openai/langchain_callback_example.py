@@ -13,7 +13,7 @@ class HeaderCallbackHandler(BaseCallbackHandler):
     """Custom callback handler that modifies the headers on chat model start."""
 
     def __init__(self):
-        self.api_key = os.environ.get("JAVELIN_API_KEY")
+        self.api_key = os.environ.get("HIGHFLAME_API_KEY") or os.environ.get("JAVELIN_API_KEY")
 
     def on_chain_start(
         self, serialized: Dict[str, Any], inputs: Dict[str, Any], **kwargs: Any
@@ -57,7 +57,7 @@ model = init_chat_model(
     base_url="http://127.0.0.1:8000/v1",
     extra_headers={
         "x-javelin-route": "openai_univ",
-        "x-api-key": os.environ.get("JAVELIN_API_KEY"),
+        "x-api-key": os.environ.get("HIGHFLAME_API_KEY") or os.environ.get("JAVELIN_API_KEY"),
     },
     callbacks=[callback_handler],  # Add our custom callback handler
 )

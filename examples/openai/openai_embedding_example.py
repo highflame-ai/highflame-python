@@ -7,7 +7,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 dotenv.load_dotenv()
 
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 llm_api_key = os.getenv("OPENAI_API_KEY")
 
 embeddings = OpenAIEmbeddings(openai_api_key=llm_api_key)
@@ -37,7 +37,7 @@ for i, embedding in enumerate(embedded_texts):
 javelin_headers = {"x-api-key": javelin_api_key, "x-javelin-route": "myusers"}
 
 llm = ChatOpenAI(
-    openai_api_base=f"{os.getenv('JAVELIN_BASE_URL')}/v1/query",
+    openai_api_base=f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}/v1/query",
     openai_api_key=llm_api_key,
     model_kwargs={"extra_headers": javelin_headers},
 )

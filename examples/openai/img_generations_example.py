@@ -7,7 +7,7 @@ import dotenv
 dotenv.load_dotenv()
 
 # Load API keys from environment variables
-JAVELIN_API_KEY = os.getenv("JAVELIN_API_KEY")
+JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 LLM_API_KEY = os.getenv("LLM_API_KEY")
 BASE_URL = os.getenv("BASE_URL")
 

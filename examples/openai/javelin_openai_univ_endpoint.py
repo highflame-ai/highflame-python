@@ -14,8 +14,8 @@ def print_response(provider: str, response: Dict[str, Any]) -> None:
 
 # Setup client configuration
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
     llm_api_key=os.getenv("OPENAI_API_KEY"),
 )
 client = JavelinClient(config)
@@ -32,7 +32,7 @@ custom_headers = {
     "x-javelin-route": "openai_univ",
     "x-javelin-model": "gpt-4",
     "x-javelin-provider": "https://api.openai.com/v1",
-    "x-api-key": os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
+    "x-api-key": os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
     # Use environment variable for security
     "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
 }

@@ -11,7 +11,7 @@ from google.genai.types import Content, Part
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-JAVELIN_API_KEY = os.getenv("JAVELIN_API_KEY")
+JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 
 if not GEMINI_API_KEY:
     raise ValueError("Missing GEMINI_API_KEY")

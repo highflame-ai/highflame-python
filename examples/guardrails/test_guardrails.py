@@ -2,7 +2,7 @@ import os
 from javelin_sdk import JavelinClient, JavelinConfig
 
 # Use your actual API key here
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 
 config = JavelinConfig(
     base_url="https://api-dev.javelin.live", javelin_api_key=javelin_api_key

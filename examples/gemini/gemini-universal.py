@@ -17,7 +17,7 @@ def init_gemini_client():
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     )
 
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     config = JavelinConfig(javelin_api_key=javelin_api_key)
     client = JavelinClient(config)
     client.register_gemini(openai_client, route_name="google_univ")

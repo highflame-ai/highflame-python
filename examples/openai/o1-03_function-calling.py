@@ -21,7 +21,7 @@ def init_openai_client():
 
 
 def init_javelin_client(openai_client, route_name="openai_univ"):
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     config = JavelinConfig(javelin_api_key=javelin_api_key)
     client = JavelinClient(config)
     client.register_openai(openai_client, route_name=route_name)
@@ -159,7 +159,7 @@ def init_azure_client():
 
 
 def init_javelin_client_azure(azure_client, route_name="azureopenai_univ"):
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     config = JavelinConfig(javelin_api_key=javelin_api_key)
     client = JavelinClient(config)
     client.register_azureopenai(azure_client, route_name=route_name)
@@ -297,7 +297,7 @@ def openai_regular_non_stream():
         "\n==== Running OpenAI Regular Route Non-Streaming Function "
         "Calling Example ===="
     )
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     llm_api_key = os.getenv("OPENAI_API_KEY")
     if not javelin_api_key or not llm_api_key:
         raise ValueError("Both JAVELIN_API_KEY and OPENAI_API_KEY must be set.")
@@ -341,7 +341,7 @@ def openai_regular_stream():
     print(
         "\n==== Running OpenAI Regular Route Streaming Function " "Calling Example ===="
     )
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     llm_api_key = os.getenv("OPENAI_API_KEY")
     if not javelin_api_key or not llm_api_key:
         raise ValueError("Both JAVELIN_API_KEY and OPENAI_API_KEY must be set.")

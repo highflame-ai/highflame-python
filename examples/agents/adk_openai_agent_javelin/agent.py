@@ -10,7 +10,7 @@ from google.genai.types import Content, Part
 
 load_dotenv()
 
-JAVELIN_API_KEY = os.getenv("JAVELIN_API_KEY")
+JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not JAVELIN_API_KEY:

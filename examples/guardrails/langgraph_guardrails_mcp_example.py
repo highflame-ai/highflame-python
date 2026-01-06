@@ -25,8 +25,8 @@ load_dotenv()
 
 # Configuration from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-JAVELIN_API_KEY = os.getenv("JAVELIN_API_KEY")
-BASE_URL = os.getenv("JAVELIN_BASE_URL")
+JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+BASE_URL = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
 MODEL_NAME_CHAT = os.getenv("MODEL_NAME_CHAT", "openai/gpt-4o-mini")
 JAVELIN_GUARDRAILS_URL = os.getenv(
     "JAVELIN_GUARDRAILS_URL", "https://javelin-guardrails.fastmcp.app/mcp"
@@ -133,7 +133,7 @@ async def main():
     Main function demonstrating the Guardrails MCP Agent.
     """
     # Validate required environment variables
-    required_vars = ["OPENAI_API_KEY", "JAVELIN_API_KEY", "JAVELIN_BASE_URL"]
+    required_vars = ["OPENAI_API_KEY"]  # JAVELIN_* vars now have HIGHFLAME_* fallback
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:

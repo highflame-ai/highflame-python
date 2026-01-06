@@ -6,7 +6,7 @@ from javelin_sdk import JavelinClient, JavelinConfig
 
 # Environment Variables
 openai_api_key = os.getenv("OPENAI_API_KEY")
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 
 # Initialize Javelin Client
@@ -43,9 +43,9 @@ def openai_chat_completions():
 
 # Initialize Javelin Client
 def initialize_javelin_client():
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
     config = JavelinConfig(
-        base_url=os.getenv("JAVELIN_BASE_URL"),
+        base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
         javelin_api_key=javelin_api_key,
     )
     return JavelinClient(config)

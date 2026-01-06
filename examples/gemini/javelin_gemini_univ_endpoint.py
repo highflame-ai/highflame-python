@@ -14,8 +14,8 @@ def print_response(provider: str, response: Dict[str, Any]) -> None:
 
 # Setup client configuration
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
     llm_api_key=os.getenv("OPENAI_API_KEY"),
 )
 client = JavelinClient(config)
@@ -32,7 +32,7 @@ custom_headers = {
     "x-javelin-route": "google_univ",
     "x-javelin-model": "gemini-1.5-flash",
     "x-javelin-provider": "https://generativelanguage.googleapis.com/v1beta/openai",
-    "x-api-key": os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
+    "x-api-key": os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
     # Use environment variable for security
     "Authorization": f"Bearer {os.getenv('GEMINI_API_KEY')}",
 }

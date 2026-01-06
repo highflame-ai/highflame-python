@@ -31,7 +31,7 @@ def init_javelin_client_sync(openai_client):
     """Initialize JavelinClient for synchronous usage and register the OpenAI route."""
     try:
         # Set (and print) the Javelin key
-        javelin_api_key = os.getenv("JAVELIN_API_KEY")
+        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
         config = JavelinConfig(
             javelin_api_key=javelin_api_key,
         )
@@ -111,9 +111,9 @@ def init_async_openai_client():
 def init_javelin_client_async(openai_async_client):
     """Initialize JavelinClient for async usage and register the OpenAI route."""
     try:
-        javelin_api_key = os.getenv("JAVELIN_API_KEY")  # add your javelin api key here
+        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")  # add your javelin api key here
         config = JavelinConfig(
-            javelin_api_key=javelin_api_key, base_url=os.getenv("JAVELIN_BASE_URL")
+            javelin_api_key=javelin_api_key, base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
         )
         client = JavelinClient(config)
         client.register_openai(openai_async_client, route_name="openai_univ")
