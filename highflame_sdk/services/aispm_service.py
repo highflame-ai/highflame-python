@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 from httpx import Response
 import json
 
-from javelin_sdk.models import (
+from highflame_sdk.models import (
     Customer,
     CustomerResponse,
     AWSConfig,

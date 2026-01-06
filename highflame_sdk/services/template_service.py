@@ -1,5 +1,5 @@
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
@@ -7,7 +7,7 @@ from javelin_sdk.exceptions import (
     TemplateNotFoundError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request, Template, Templates
+from highflame_sdk.models import HttpMethod, Request, Template, Templates
 
 
 class TemplateService:

@@ -1,5 +1,5 @@
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     GatewayAlreadyExistsError,
     GatewayNotFoundError,
@@ -7,7 +7,7 @@ from javelin_sdk.exceptions import (
     RateLimitExceededError,
     UnauthorizedError,
 )
-from javelin_sdk.models import Gateway, Gateways, HttpMethod, Request
+from highflame_sdk.models import Gateway, Gateways, HttpMethod, Request
 
 
 class GatewayService:

@@ -1,5 +1,5 @@
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
@@ -7,7 +7,7 @@ from javelin_sdk.exceptions import (
     SecretNotFoundError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request, Secret, Secrets
+from highflame_sdk.models import HttpMethod, Request, Secret, Secrets
 
 
 class SecretService:

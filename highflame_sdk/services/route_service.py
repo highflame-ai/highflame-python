@@ -2,7 +2,7 @@ import json
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
@@ -10,7 +10,7 @@ from javelin_sdk.exceptions import (
     RouteNotFoundError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request, Route, Routes, UnivModelConfig
+from highflame_sdk.models import HttpMethod, Request, Route, Routes, UnivModelConfig
 from jsonpath_ng import parse
 
 

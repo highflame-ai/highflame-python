@@ -1,14 +1,14 @@
 from typing import Any
 
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
     TraceNotFoundError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request, Template
+from highflame_sdk.models import HttpMethod, Request, Template
 
 
 class TraceService:

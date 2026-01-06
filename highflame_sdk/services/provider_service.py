@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     ProviderAlreadyExistsError,
@@ -9,7 +9,7 @@ from javelin_sdk.exceptions import (
     RateLimitExceededError,
     UnauthorizedError,
 )
-from javelin_sdk.models import (
+from highflame_sdk.models import (
     EndpointType,
     HttpMethod,
     Provider,

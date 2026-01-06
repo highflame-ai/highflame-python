@@ -1,13 +1,13 @@
 from typing import Any, Dict, Optional
 
 import httpx
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request
+from highflame_sdk.models import HttpMethod, Request
 
 
 class ModelSpecService:

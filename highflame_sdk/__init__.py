@@ -1,5 +1,5 @@
-from javelin_sdk.client import JavelinClient
-from javelin_sdk.exceptions import (
+from highflame_sdk.client import JavelinClient
+from highflame_sdk.exceptions import (
     BadRequest,
     GatewayNotFoundError,
     InternalServerError,
@@ -16,7 +16,7 @@ from javelin_sdk.exceptions import (
     UnauthorizedError,
     ValidationError,
 )
-from javelin_sdk.models import (
+from highflame_sdk.models import (
     Gateway,
     Gateways,
     JavelinConfig,

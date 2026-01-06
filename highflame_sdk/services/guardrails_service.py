@@ -1,11 +1,11 @@
 import httpx
 from typing import Any, Dict, Optional
-from javelin_sdk.exceptions import (
+from highflame_sdk.exceptions import (
     BadRequest,
     RateLimitExceededError,
     UnauthorizedError,
 )
-from javelin_sdk.models import HttpMethod, Request
+from highflame_sdk.models import HttpMethod, Request
 
 
 class GuardrailsService:

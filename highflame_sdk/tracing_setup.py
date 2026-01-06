@@ -1,4 +1,4 @@
-# javelin_sdk/tracing_setup.py
+# highflame_sdk/tracing_setup.py
 # from opentelemetry.instrumentation.botocore import BotocoreInstrumentor
 import os
 from typing import Optional

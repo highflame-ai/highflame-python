@@ -1,8 +1,8 @@
 import logging
 from typing import Any, Dict, Generator, List, Optional, Union
 
-from javelin_sdk.model_adapters import ModelTransformer, TransformationRuleManager
-from javelin_sdk.models import EndpointType
+from highflame_sdk.model_adapters import ModelTransformer, TransformationRuleManager
+from highflame_sdk.models import EndpointType
 
 logger = logging.getLogger(__name__)
 
