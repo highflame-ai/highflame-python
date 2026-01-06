@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "javelin-sdk"
+name = "highflame-sdk"
 version = "0.2.7-dev"
 description = "Python client for Javelin"
 authors = ["Sharath Rajasekar <sharath@highflame.com>"]
@@ -8,11 +8,11 @@ license = "Apache-2.0"
 homepage = "https://getjavelin.com"
 packages = [
     { include = "javelin_cli" },
-    { include = "javelin_sdk" },
+    { include = "highflame_sdk" },
 ]
 
 [tool.poetry.scripts]
-javelin = "javelin_cli.cli:main"
+highflame = "javelin_cli.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"
