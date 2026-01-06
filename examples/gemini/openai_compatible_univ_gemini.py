@@ -6,7 +6,7 @@
 # regardless of the underlying model provider, with Javelin handling the
 # necessary translations and adaptations behind the scenes.
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 import os
 from typing import Dict, Any
 import json

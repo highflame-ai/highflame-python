@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Dict, Any
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 from dotenv import load_dotenv
 
 load_dotenv()

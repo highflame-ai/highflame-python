@@ -4,7 +4,7 @@ import json
 import os
 from typing import Dict, Any
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 # Load ENV
 from dotenv import load_dotenv

@@ -2,7 +2,7 @@ import os
 import base64
 import requests
 from openai import OpenAI, AsyncOpenAI, AzureOpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 from pydantic import BaseModel
 
 # Environment Variables

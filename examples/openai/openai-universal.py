@@ -1,4 +1,4 @@
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 from openai import AsyncOpenAI, OpenAI
 import asyncio
 import os

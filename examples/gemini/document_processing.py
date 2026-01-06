@@ -3,7 +3,7 @@ import os
 
 from openai import OpenAI
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 # Environment Variables
 openai_api_key = os.getenv("OPENAI_API_KEY")

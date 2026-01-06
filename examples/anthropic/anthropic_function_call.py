@@ -2,7 +2,7 @@
 import os
 import json
 import asyncio
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 # Load environment variables
 from dotenv import load_dotenv

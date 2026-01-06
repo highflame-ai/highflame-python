@@ -3,7 +3,7 @@ import os
 
 import dotenv
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 dotenv.load_dotenv()
 

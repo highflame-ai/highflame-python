@@ -4,7 +4,7 @@ import os
 import boto3
 from dotenv import load_dotenv
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 

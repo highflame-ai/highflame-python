@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 

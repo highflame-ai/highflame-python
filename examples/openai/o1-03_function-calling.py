@@ -5,7 +5,7 @@ import re
 import argparse
 from dotenv import load_dotenv
 from openai import OpenAI, AzureOpenAI
-from javelin_sdk import JavelinClient, JavelinConfig, RouteNotFoundError
+from highflame_sdk import JavelinClient, JavelinConfig, RouteNotFoundError
 
 # Load environment variables once at the start
 load_dotenv()

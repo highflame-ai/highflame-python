@@ -3,7 +3,7 @@ import json
 import os
 from typing import Any, Dict
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 
 # Helper function to pretty print responses

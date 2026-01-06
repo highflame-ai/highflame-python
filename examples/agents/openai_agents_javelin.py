@@ -11,7 +11,7 @@ from agents import (
 )
 
 from openai import AsyncOpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 from dotenv import load_dotenv
 
 ##############################################################################

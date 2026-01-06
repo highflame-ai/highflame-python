@@ -1,6 +1,6 @@
 import base64
 from openai import OpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 import os
 import dotenv
 
