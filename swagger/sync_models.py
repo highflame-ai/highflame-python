@@ -8,7 +8,7 @@ import yaml
 
 SWAGGER_FILE_PATH = Path(os.path.join(os.path.dirname(__file__), "swagger.yaml"))
 MODELS_FILE_PATH = Path(
-    os.path.join(os.path.dirname(__file__), "..", "javelin_sdk", "models.py")
+    os.path.join(os.path.dirname(__file__), "..", "highflame_sdk", "models.py")
 )
 
 FIELDS_TO_EXCLUDE = {
@@ -172,10 +172,10 @@ def modify_and_convert_swagger(input_file, output_file):
 
     # Add info section with title and version
     swagger_data["info"] = {
-        "title": "Javelin Admin API",
+        "title": "HighFlame Admin API",
         "version": "1.0",
         "contact": {},
-        "description": "This is the Javelin Admin API",
+        "description": "This is the HighFlame Admin API",
     }
 
     # Remove 'providername' from '/v1/admin/providers/secrets/keys' path
