@@ -12,7 +12,7 @@ from pathlib import Path
 
 import requests
 
-from javelin_cli._internal.commands import (
+from highflame_cli._internal.commands import (
     create_gateway,
     create_provider,
     create_route,
@@ -49,13 +49,27 @@ from javelin_cli._internal.commands import (
 )
 
 
+def get_cache_file():
+    """Get cache file path, checking new location first, then falling back to old location"""
+    home_dir = Path.home()
+    # Try new location first
+    new_cache_file = home_dir / ".highflame" / "cache.json"
+    if new_cache_file.exists():
+        return new_cache_file
+    # Fall back to old location for backward compatibility
+    old_cache_file = home_dir / ".javelin" / "cache.json"
+    if old_cache_file.exists():
+        return old_cache_file
+    # Default to new location if neither exists
+    return new_cache_file
+
+
 def check_permissions():
     """Check if user has permissions"""
-    home_dir = Path.home()
-    cache_file = home_dir / ".javelin" / "cache.json"
+    cache_file = get_cache_file()
 
     if not cache_file.exists():
-        print("❌ Not authenticated. Please run 'javelin auth' first.")
+        print("❌ Not authenticated. Please run 'highflame auth' first.")
         sys.exit(1)
 
     try:
@@ -67,7 +81,7 @@ def check_permissions():
             if membership.get("role") == "org:superadmin":
                 return True
 
-        print("❌ Permission denied: Javelin CLI requires superadmin privileges.")
+        print("❌ Permission denied: HighFlame CLI requires superadmin privileges.")
         print("Please contact your administrator for access.")
         sys.exit(1)
 
@@ -79,11 +93,11 @@ def check_permissions():
 def main():
     # Fetch the version dynamically from the package
     package_version = importlib.metadata.version(
-        "javelin-sdk"
-    )  # Replace with your package name
+        "highflame-sdk"
+    )
 
     parser = argparse.ArgumentParser(
-        description="The CLI for Javelin.",
+        description="The CLI for HighFlame.",
         formatter_class=argparse.RawTextHelpFormatter,
         epilog=(
             "See https://docs.getjavelin.io/docs/javelin-python/cli for more "
@@ -91,13 +105,13 @@ def main():
         ),
     )
     parser.add_argument(
-        "--version", action="version", version=f"Javelin CLI v{package_version}"
+        "--version", action="version", version=f"HighFlame CLI v{package_version}"
     )
 
     subparsers = parser.add_subparsers(title="commands", metavar="")
 
     # Auth command
-    auth_parser = subparsers.add_parser("auth", help="Authenticate with Javelin.")
+    auth_parser = subparsers.add_parser("auth", help="Authenticate with HighFlame.")
     auth_parser.add_argument(
         "--force",
         action="store_true",
@@ -493,10 +507,14 @@ def main():
 
 def authenticate(args):
     home_dir = Path.home()
-    javelin_dir = home_dir / ".javelin"
-    cache_file = javelin_dir / "cache.json"
+    highflame_dir = home_dir / ".highflame"
+    cache_file = highflame_dir / "cache.json"
+
+    # Also check old location for backward compatibility
+    old_cache_file = home_dir / ".javelin" / "cache.json"
+
     print(cache_file)
-    if cache_file.exists() and not args.force:
+    if (cache_file.exists() or old_cache_file.exists()) and not args.force:
         print("✅ User is already authenticated!")
         print("Use --force to re-authenticate and override existing cache.")
         return
@@ -504,8 +522,8 @@ def authenticate(args):
     default_url = "https://dev.highflame.dev/"
     print("   O")
     print("  /|\\")
-    print("  / \\    ========> Welcome to Javelin! 🚀")
-    print("\nBefore you can use Javelin, you need to authenticate.")
+    print("  / \\    ========> Welcome to HighFlame! 🚀")
+    print("\nBefore you can use HighFlame, you need to authenticate.")
     print("Press Enter to open the default login URL in your browser...")
     print(f"Default URL: {default_url}")
     print("Or enter a new URL (leave blank to use the default): ", end="")
@@ -530,7 +548,7 @@ def authenticate(args):
     if cache_file.exists():
         print("✅ Successfully authenticated!")
     else:
-        print("⚠️ Failed to retrieve Javelin cache.")
+        print("⚠️ Failed to retrieve HighFlame cache.")
 
 
 def start_local_server():
@@ -586,10 +604,10 @@ def start_local_server():
 
 def store_credentials(secrets):
     home_dir = Path.home()
-    javelin_dir = home_dir / ".javelin"
-    javelin_dir.mkdir(exist_ok=True)
+    highflame_dir = home_dir / ".highflame"
+    highflame_dir.mkdir(exist_ok=True)
 
-    cache_file = javelin_dir / "cache.json"
+    cache_file = highflame_dir / "cache.json"
 
     try:
         cache_data = json.loads(secrets)

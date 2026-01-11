@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
 
-from javelin_sdk.client import JavelinClient
-from javelin_sdk.exceptions import (
+from highflame_sdk.client import JavelinClient
+from highflame_sdk.exceptions import (
     BadRequest,
     NetworkError,
     UnauthorizedError,
 )
-from javelin_sdk.models import (
+from highflame_sdk.models import (
     AWSConfig,
     Gateway,
     GatewayConfig,
@@ -27,10 +27,24 @@ from javelin_sdk.models import (
 from pydantic import ValidationError
 
 
+def get_cache_file():
+    """Get cache file path, checking new location first, then falling back to old location"""
+    home_dir = Path.home()
+    # Try new location first
+    new_cache_file = home_dir / ".highflame" / "cache.json"
+    if new_cache_file.exists():
+        return new_cache_file
+    # Fall back to old location for backward compatibility
+    old_cache_file = home_dir / ".javelin" / "cache.json"
+    if old_cache_file.exists():
+        return old_cache_file
+    # Default to new location if neither exists
+    return new_cache_file
+
+
 def get_javelin_client_aispm():
     # Path to cache.json file
-    home_dir = Path.home()
-    json_file_path = home_dir / ".javelin" / "cache.json"
+    json_file_path = get_cache_file()
 
     # Load cache.json
     if not json_file_path.exists():
@@ -101,8 +115,7 @@ def get_javelin_client_aispm():
 
 def get_javelin_client():
     # Path to cache.json file
-    home_dir = Path.home()
-    json_file_path = home_dir / ".javelin" / "cache.json"
+    json_file_path = get_cache_file()
 
     # Load cache.json
     if not json_file_path.exists():
@@ -328,8 +341,7 @@ def list_gateways(args):
         print(f"Unexpected error: {e}")
     """
     # Path to cache.json file
-    home_dir = Path.home()
-    json_file_path = home_dir / ".javelin" / "cache.json"
+    json_file_path = get_cache_file()
 
     # Load cache.json
     if not json_file_path.exists():

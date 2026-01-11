@@ -78,11 +78,20 @@ class JavelinClient:
         self.config = config
         self.base_url = urljoin(config.base_url, config.api_version or "/v1")
 
-        self._headers = {"x-javelin-apikey": config.javelin_api_key}
+        # Use properties that support both old and new field names
+        api_key = config.api_key
+        virtual_api_key = config.virtual_api_key
+        
+        # Send both headers for backward compatibility (backend may accept either)
+        self._headers = {
+            "x-highflame-apikey": api_key,  # New header
+            "x-javelin-apikey": api_key,     # Old header (for backward compatibility)
+        }
         if config.llm_api_key:
             self._headers["Authorization"] = f"Bearer {config.llm_api_key}"
-        if config.javelin_virtualapikey:
-            self._headers["x-javelin-virtualapikey"] = config.javelin_virtualapikey
+        if virtual_api_key:
+            self._headers["x-highflame-virtualapikey"] = virtual_api_key  # New header
+            self._headers["x-javelin-virtualapikey"] = virtual_api_key     # Old header (for backward compatibility)
         self._client = None
         self._aclient = None
         self.bedrock_client = None
@@ -972,7 +981,9 @@ class JavelinClient:
             and request.route.startswith("v1/admin/aispm")
             and "x-javelin-accountid" in headers
         ):
+            # Remove both old and new headers for backward compatibility
             headers.pop("x-javelin-apikey", None)
+            headers.pop("x-highflame-apikey", None)
 
         return url, headers
 

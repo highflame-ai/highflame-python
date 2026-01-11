@@ -7,12 +7,12 @@ readme = "README.md"
 license = "Apache-2.0"
 homepage = "https://getjavelin.com"
 packages = [
-    { include = "javelin_cli" },
+    { include = "highflame_cli" },
     { include = "highflame_sdk" },
 ]
 
 [tool.poetry.scripts]
-highflame = "javelin_cli.cli:main"
+highflame = "highflame_cli.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"

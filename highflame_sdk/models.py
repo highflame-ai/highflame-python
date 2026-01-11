@@ -3,7 +3,7 @@ from enum import Enum, auto
 from typing import Any, Dict, List, Optional
 
 from highflame_sdk.exceptions import UnauthorizedError
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class GatewayConfig(BaseModel):
@@ -466,13 +466,22 @@ class QueryResponse(BaseModel):
 
 
 class JavelinConfig(BaseModel):
-    javelin_api_key: str = Field(..., description="Javelin API key")
+    # Primary fields (old names kept for backward compatibility)
+    javelin_api_key: Optional[str] = Field(
+        default=None, description="Javelin API key (deprecated, use highflame_api_key)"
+    )
+    highflame_api_key: Optional[str] = Field(
+        default=None, description="HighFlame API key"
+    )
     base_url: str = Field(
         default="https://api-dev.javelin.live",
         description="Base URL for the Javelin API",
     )
     javelin_virtualapikey: Optional[str] = Field(
-        default=None, description="Virtual API key for Javelin"
+        default=None, description="Virtual API key for Javelin (deprecated, use highflame_virtualapikey)"
+    )
+    highflame_virtualapikey: Optional[str] = Field(
+        default=None, description="Virtual API key for HighFlame"
     )
     llm_api_key: Optional[str] = Field(
         default=None, description="API key for the LLM provider"
@@ -485,19 +494,50 @@ class JavelinConfig(BaseModel):
         default=None, description="Request timeout in seconds"
     )
 
-    @field_validator("javelin_api_key")
+    @model_validator(mode="before")
     @classmethod
-    def validate_api_key(cls, value: str) -> str:
-        if not value:
+    def handle_backward_compatibility(cls, data: Any) -> Any:
+        """Handle backward compatibility between old and new field names"""
+        if isinstance(data, dict):
+            # Support both highflame_api_key and javelin_api_key
+            # If both are provided, prefer highflame_api_key
+            if "highflame_api_key" in data and "javelin_api_key" not in data:
+                data["javelin_api_key"] = data["highflame_api_key"]
+            elif "javelin_api_key" in data and "highflame_api_key" not in data:
+                data["highflame_api_key"] = data["javelin_api_key"]
+            
+            # Support both highflame_virtualapikey and javelin_virtualapikey
+            if "highflame_virtualapikey" in data and "javelin_virtualapikey" not in data:
+                data["javelin_virtualapikey"] = data.get("highflame_virtualapikey")
+            elif "javelin_virtualapikey" in data and "highflame_virtualapikey" not in data:
+                data["highflame_virtualapikey"] = data.get("javelin_virtualapikey")
+        return data
+
+    @model_validator(mode="after")
+    def validate_at_least_one_api_key(self) -> "JavelinConfig":
+        """Ensure at least one API key field is provided and not empty"""
+        api_key = self.highflame_api_key or self.javelin_api_key
+        if not api_key or (isinstance(api_key, str) and api_key.strip() == ""):
             raise UnauthorizedError(
                 response=None,
                 message=(
-                    "Please provide a valid Javelin API Key. "
-                    "When you sign into Javelin, you can find your API Key in the "
+                    "Please provide a valid HighFlame API Key (highflame_api_key) or "
+                    "Javelin API Key (javelin_api_key for backward compatibility). "
+                    "When you sign into HighFlame, you can find your API Key in the "
                     "Account->Developer settings"
                 ),
             )
-        return value
+        return self
+    
+    @property
+    def api_key(self) -> str:
+        """Get the API key (prefers highflame_api_key, falls back to javelin_api_key)"""
+        return self.highflame_api_key or self.javelin_api_key or ""
+    
+    @property
+    def virtual_api_key(self) -> Optional[str]:
+        """Get the virtual API key (prefers highflame_virtualapikey, falls back to javelin_virtualapikey)"""
+        return self.highflame_virtualapikey or self.javelin_virtualapikey
 
 
 class HttpMethod(Enum):
