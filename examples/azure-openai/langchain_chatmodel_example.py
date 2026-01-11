@@ -4,7 +4,7 @@ import os
 
 dotenv.load_dotenv()
 
-url = os.path.join(os.getenv("JAVELIN_BASE_URL"), "v1")
+url = os.path.join(os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"), "v1")
 print(url)
 model = AzureChatOpenAI(
     azure_endpoint=url,
@@ -12,7 +12,7 @@ model = AzureChatOpenAI(
     openai_api_version="2023-03-15-preview",
     extra_headers={
         "x-javelin-route": "azureopenai_univ",
-        "x-api-key": os.environ.get("JAVELIN_API_KEY"),
+        "x-api-key": os.environ.get("HIGHFLAME_API_KEY") or os.environ.get("JAVELIN_API_KEY"),
     },
 )
 

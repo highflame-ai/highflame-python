@@ -21,8 +21,8 @@ def print_response(provider: str, response: Dict[str, Any]) -> None:
 
 # Setup Bedrock Javelin client
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
 )
 client = JavelinClient(config)
 
@@ -30,7 +30,7 @@ headers = {
     "Content-Type": "application/json",
     "x-javelin-route": "amazon_univ",
     "x-javelin-model": "amazon.titan-text-express-v1",  # replace if needed
-    "x-api-key": os.getenv("JAVELIN_API_KEY"),
+    "x-api-key": os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
 }
 
 
