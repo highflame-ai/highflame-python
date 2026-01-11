@@ -1,12 +1,12 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg "DeepWiki Documentation")](https://deepwiki.com/getjavelin/javelin-python)
 
-## Javelin: an Enterprise-Scale, Fast LLM Gateway/Edge
+## HighFlame: an Enterprise-Scale, Fast LLM Gateway/Edge
 
-This is the Python client package for Javelin.
+This is the Python client package for HighFlame.
 
-For more information about Javelin, see https://getjavelin.com
+For more information about HighFlame, see https://highflame.com
 
-Javelin Documentation: https://docs.getjavelin.io
+HighFlame Documentation: https://docs.getjavelin.io
 
 ### Development
 
@@ -69,41 +69,41 @@ pip install dist/highflame_sdk-<version>-py3-none-any.whl
 
 ## [Universal Endpoints](https://docs.getjavelin.io/docs/javelin-core/integration#unified-endpoints)
 
-Javelin provides universal endpoints that allow you to use a consistent interface across different LLM providers. Here are the main patterns:
+HighFlame provides universal endpoints that allow you to use a consistent interface across different LLM providers. Here are the main patterns:
 
 #### Azure OpenAI
 
-- [Basic Azure OpenAI integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/azure-universal.py)
-- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/javelin_azureopenai_univ_endpoint.py)
-- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/azure-openai/openai_compatible_univ_azure.py)
+- [Basic Azure OpenAI integration](https://github.com/highflame-ai/highflame-python/blob/main/examples/azure-openai/azure-universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/highflame-python/blob/main/examples/azure-openai/highflame_azureopenai_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/highflame-python/blob/main/examples/azure-openai/openai_compatible_univ_azure.py)
 
 #### Bedrock
 
-- [Basic Bedrock integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/bedrock_client_universal.py)
-- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/javelin_bedrock_univ_endpoint.py)
-- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/bedrock/openai_compatible_univ_bedrock.py)
+- [Basic Bedrock integration](https://github.com/highflame-ai/highflame-python/blob/main/examples/bedrock/bedrock_client_universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/highflame-python/blob/main/examples/bedrock/highflame_bedrock_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/highflame-python/blob/main/examples/bedrock/openai_compatible_univ_bedrock.py)
 
 #### Gemini
 
-- [Basic Gemini integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/gemini-universal.py)
-- [Universal endpoint implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/javelin_gemini_univ_endpoint.py)
-- [OpenAI-compatible interface](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/openai_compatible_univ_gemini.py)
+- [Basic Gemini integration](https://github.com/highflame-ai/highflame-python/blob/main/examples/gemini/gemini-universal.py)
+- [Universal endpoint implementation](https://github.com/highflame-ai/highflame-python/blob/main/examples/gemini/highflame_gemini_univ_endpoint.py)
+- [OpenAI-compatible interface](https://github.com/highflame-ai/highflame-python/blob/main/examples/gemini/openai_compatible_univ_gemini.py)
 
 ### Agent Examples
 
-- [CrewAI integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/agents/crewai_javelin.ipynb)
-- [LangGraph integration](https://github.com/highflame-ai/javelin-python/blob/main/examples/agents/langgraph_javelin.ipynb)
+- [CrewAI integration](https://github.com/highflame-ai/highflame-python/blob/main/examples/agents/crewai_highflame.ipynb)
+- [LangGraph integration](https://github.com/highflame-ai/highflame-python/blob/main/examples/agents/langgraph_highflame.ipynb)
 
 ### Basic Examples
 
-- [Asynchronous example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/aexample.py)
-- [Synchronous example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/example.py)
-- [Drop-in replacement example](https://github.com/highflame-ai/javelin-python/blob/main/examples/route_examples/drop_in_replacement.py)
+- [Asynchronous example](https://github.com/highflame-ai/highflame-python/blob/main/examples/route_examples/aexample.py)
+- [Synchronous example](https://github.com/highflame-ai/highflame-python/blob/main/examples/route_examples/example.py)
+- [Drop-in replacement example](https://github.com/highflame-ai/highflame-python/blob/main/examples/route_examples/drop_in_replacement.py)
 
 ### Advanced Examples
 
-- [Document processing](https://github.com/highflame-ai/javelin-python/blob/main/examples/gemini/document_processing.py)
-- [RAG implementation](https://github.com/highflame-ai/javelin-python/blob/main/examples/rag/javelin_rag_embeddings_demo.ipynb)
+- [Document processing](https://github.com/highflame-ai/highflame-python/blob/main/examples/gemini/document_processing.py)
+- [RAG implementation](https://github.com/highflame-ai/highflame-python/blob/main/examples/rag/highflame_rag_embeddings_demo.ipynb)
 
 ## Additional Integration Patterns
 

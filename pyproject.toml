@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "highflame-sdk"
 version = "0.2.7-dev"
-description = "Python client for Javelin"
+description = "Python client for HighFlame"
 authors = ["Sharath Rajasekar <sharath@highflame.com>"]
 readme = "README.md"
 license = "Apache-2.0"
-homepage = "https://getjavelin.com"
+homepage = "https://highflame.com"
 packages = [
     { include = "highflame_cli" },
     { include = "highflame_sdk" },
