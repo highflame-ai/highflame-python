@@ -1,11 +1,13 @@
 from highflame_sdk.client import JavelinClient
 from highflame_sdk.exceptions import (
     BadRequest,
+    GatewayAlreadyExistsError,
     GatewayNotFoundError,
     InternalServerError,
     MethodNotAllowedError,
     NetworkError,
     ProviderAlreadyExistsError,
+    ProviderNotFoundError,
     RateLimitExceededError,
     RouteAlreadyExistsError,
     RouteNotFoundError,
@@ -33,7 +35,8 @@ from highflame_sdk.models import (
 
 __all__ = [
     "GatewayNotFoundError",
-    "GatewayAlreadyExistsError" "ProviderNotFoundError",
+    "GatewayAlreadyExistsError",
+    "ProviderNotFoundError",
     "ProviderAlreadyExistsError",
     "RouteNotFoundError",
     "RouteAlreadyExistsError",
