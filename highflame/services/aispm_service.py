@@ -23,7 +23,7 @@ class AISPMService:
     def _get_aispm_headers(self) -> Dict[str, str]:
         """Get headers for AISPM requests, including account_id if available."""
         headers = {}
-        # Check if account_id is stored in client (set by get_javelin_client_aispm)
+        # Check if account_id is stored in client (set by get_highflame_client_aispm)
         account_id = getattr(self.client, "_aispm_account_id", None)
         if account_id:
             headers["x-javelin-accountid"] = account_id

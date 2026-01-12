@@ -1,9 +1,12 @@
 # highflame/tracing_setup.py
 # from opentelemetry.instrumentation.botocore import BotocoreInstrumentor
+import logging
 import os
 from typing import Optional
 
 from opentelemetry import trace
+
+logger = logging.getLogger(__name__)
 
 # from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 # Use the HTTP exporter instead of the gRPC one
@@ -22,9 +25,9 @@ TRACES_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
 TRACES_HEADERS = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
 
 # Initialize OpenTelemetry Tracer
-resource = Resource.create({"service.name": "javelin-sdk"})
+resource = Resource.create({"service.name": "highflame"})
 trace.set_tracer_provider(TracerProvider(resource=resource))
-tracer = trace.get_tracer("javelin")  # Name of the tracer
+tracer = trace.get_tracer("highflame")  # Name of the tracer
 
 
 def parse_headers(header_str: Optional[str]) -> dict:
@@ -47,7 +50,10 @@ def configure_span_exporter(api_key: Optional[str] = None):
     """
     # Disable tracing if TRACES_ENDPOINT is not set
     if not TRACES_ENDPOINT:
+        logger.debug("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT not set, tracing disabled")
         return None
+
+    logger.debug(f"Configuring OTLP span exporter with endpoint={TRACES_ENDPOINT}")
 
     # Parse headers from environment variable
     otlp_headers = parse_headers(TRACES_HEADERS)
@@ -58,6 +64,7 @@ def configure_span_exporter(api_key: Optional[str] = None):
 
     # Setup OTLP Exporter with API key in headers
     span_exporter = OTLPSpanExporter(endpoint=TRACES_ENDPOINT, headers=otlp_headers)
+    logger.debug("OTLP span exporter configured successfully")
 
     span_processor = BatchSpanProcessor(span_exporter)
     provider = trace.get_tracer_provider()

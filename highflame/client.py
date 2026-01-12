@@ -27,6 +27,8 @@ API_BASEURL = "https://api.highflame.app"
 API_BASE_PATH = "/v1"
 API_TIMEOUT = 10
 
+logger = logging.getLogger(__name__)
+
 
 class RequestWrapper:
     """A wrapper around Botocore's request object to store additional metadata."""
@@ -77,6 +79,8 @@ class Highflame:
     def __init__(self, config: Config) -> None:
         self.config = config
         self.base_url = urljoin(config.base_url, config.api_version or "/v1")
+
+        logger.debug(f"Initializing Highflame client with base_url={self.base_url}")
 
         # Send both headers for backward compatibility (backend may accept either)
         self._headers = {
@@ -828,7 +832,7 @@ class Highflame:
             span = self.tracer.start_span(operation_name, kind=SpanKind.CLIENT)
 
             # Store it in the context
-            context["javelin_request_wrapper"] = RequestWrapper(None, span)
+            context["highflame_request_wrapper"] = RequestWrapper(None, span)
 
         def bedrock_after_call(**kwargs):
             """
@@ -838,7 +842,7 @@ class Highflame:
             if not context:
                 return
 
-            wrapper = context.get("javelin_request_wrapper")
+            wrapper = context.get("highflame_request_wrapper")
             if not wrapper:
                 return
 
@@ -927,8 +931,8 @@ class Highflame:
 
         Example:
             >>> bedrock = boto3.client('bedrock-runtime')
-            >>> modified_client = javelin_client.register_bedrock_client(bedrock)
-            >>> javelin_client.register_bedrock_client(bedrock)
+            >>> modified_client = highflame_client.register_bedrock_client(bedrock)
+            >>> highflame_client.register_bedrock_client(bedrock)
             >>> bedrock.invoke_model(
         """
         self._setup_bedrock_clients(

@@ -42,7 +42,7 @@ def get_cache_file():
     return new_cache_file
 
 
-def get_javelin_client_aispm():
+def get_highflame_client_aispm():
     # Path to cache.json file
     json_file_path = get_cache_file()
 
@@ -94,12 +94,12 @@ def get_javelin_client_aispm():
         except (IndexError, AttributeError):
             pass
 
-    javelin_api_key = selected_gateway.get("api_key_value", "placeholder")
+    api_key = selected_gateway.get("api_key_value", "placeholder")
 
     # Initialize and return the Highflame client
     config = Config(
         base_url=base_url,
-        api_key=javelin_api_key,
+        api_key=api_key,
     )
 
     client = Highflame(config)
@@ -113,7 +113,7 @@ def get_javelin_client_aispm():
     return client
 
 
-def get_javelin_client():
+def get_highflame_client():
     # Path to cache.json file
     json_file_path = get_cache_file()
 
@@ -148,19 +148,19 @@ def get_javelin_client():
 
     selected_gateway = gateways[choice]
     base_url = selected_gateway["base_url"]
-    javelin_api_key = selected_gateway["api_key_value"]
+    api_key = selected_gateway["api_key_value"]
 
     # Print all the relevant variables for debugging (optional)
     # print(f"Base URL: {base_url}")
-    # print(f"Javelin API Key: {javelin_api_key}")
+    # print(f"Highflame API Key: {api_key}")
 
     # Ensure the API key is set before initializing
-    if not javelin_api_key or javelin_api_key == "":
+    if not api_key or api_key == "":
         raise UnauthorizedError(
             response=None,
             message=(
-                "Please provide a valid Javelin API Key. "
-                "When you sign into Javelin, you can find your API Key in the "
+                "Please provide a valid Highflame API Key. "
+                "When you sign into Highflame, you can find your API Key in the "
                 "Account->Developer settings"
             ),
         )
@@ -168,14 +168,14 @@ def get_javelin_client():
     # Initialize the Highflame client when required
     config = Config(
         base_url=base_url,
-        api_key=javelin_api_key,
+        api_key=api_key,
     )
 
     return Highflame(config)
 
 
 def create_customer(args):
-    client = get_javelin_client_aispm()
+    client = get_highflame_client_aispm()
     customer = Customer(
         name=args.name,
         description=args.description,
@@ -190,7 +190,7 @@ def get_customer(args):
     Gets customer details using the AISPM service.
     """
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         response = client.aispm.get_customer()
 
         # Pretty print the response for CLI output
@@ -211,7 +211,7 @@ def get_customer(args):
 
 def configure_aws(args):
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         config = json.loads(args.config)
         configs = [AWSConfig(**config)]
         client.aispm.configure_aws(configs)
@@ -225,7 +225,7 @@ def get_aws_config(args):
     Gets AWS configurations using the AISPM service.
     """
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         response = client.aispm.get_aws_configs()
         # Simply print the JSON response
         print(json.dumps(response, indent=2))
@@ -242,7 +242,7 @@ def delete_aws_config(args):
     Deletes an AWS configuration.
     """
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         client.aispm.delete_aws_config(args.name)
         print(f"AWS configuration '{args.name}' deleted successfully.")
     except Exception as e:
@@ -254,7 +254,7 @@ def get_azure_config(args):
     Gets Azure configurations using the AISPM service.
     """
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         response = client.aispm.get_azure_config()
         # Format and print the response nicely
         print(json.dumps(response, indent=2))
@@ -264,7 +264,7 @@ def get_azure_config(args):
 
 def configure_azure(args):
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         config = json.loads(args.config)
         configs = [AzureConfig(**config)]
         client.aispm.configure_azure(configs)
@@ -275,7 +275,7 @@ def configure_azure(args):
 
 def get_usage(args):
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         usage = client.aispm.get_usage(
             provider=args.provider,
             cloud_account=args.account,
@@ -289,7 +289,7 @@ def get_usage(args):
 
 def get_alerts(args):
     try:
-        client = get_javelin_client_aispm()
+        client = get_highflame_client_aispm()
         alerts = client.aispm.get_alerts(
             provider=args.provider,
             cloud_account=args.account,
@@ -303,7 +303,7 @@ def get_alerts(args):
 
 def create_gateway(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON input for GatewayConfig
         config_data = json.loads(args.config)
@@ -326,7 +326,7 @@ def create_gateway(args):
 def list_gateways(args):
     """
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Fetch and print the list of gateways
         gateways = client.list_gateways()
@@ -375,7 +375,7 @@ def list_gateways(args):
 
 def get_gateway(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         gateway = client.get_gateway(args.name)
         print(f"Gateway details for '{args.name}':")
@@ -391,7 +391,7 @@ def get_gateway(args):
 
 def update_gateway(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         config_data = json.loads(args.config)
         config = GatewayConfig(**config_data)
@@ -412,7 +412,7 @@ def update_gateway(args):
 
 def delete_gateway(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         client.delete_gateway(args.name)
         print(f"Gateway '{args.name}' deleted successfully.")
@@ -427,7 +427,7 @@ def delete_gateway(args):
 
 def create_provider(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string from args.config to a dictionary
         config_data = json.loads(args.config)
@@ -464,7 +464,7 @@ def create_provider(args):
 
 def list_providers(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         providers = client.list_providers()
         print("List of providers:")
@@ -480,7 +480,7 @@ def list_providers(args):
 
 def get_provider(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         provider = client.get_provider(args.name)
         print(f"Provider details for '{args.name}':")
@@ -496,7 +496,7 @@ def get_provider(args):
 
 def update_provider(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string for config
         config_data = json.loads(args.config)
@@ -529,7 +529,7 @@ def update_provider(args):
 
 def delete_provider(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         client.delete_provider(args.name)
         print(f"Provider '{args.name}' deleted successfully.")
@@ -544,7 +544,7 @@ def delete_provider(args):
 
 def create_route(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string for config and models
         config_data = json.loads(args.config)
@@ -582,7 +582,7 @@ def create_route(args):
 
 def list_routes(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         routes = client.list_routes()
         print("List of routes:")
@@ -598,7 +598,7 @@ def list_routes(args):
 
 def get_route(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         route = client.get_route(args.name)
         print(f"Route details for '{args.name}':")
@@ -614,7 +614,7 @@ def get_route(args):
 
 def update_route(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string for config and models
         config_data = json.loads(args.config)
@@ -648,7 +648,7 @@ def update_route(args):
 
 def delete_route(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         client.delete_route(args.name)
         print(f"Route '{args.name}' deleted successfully.")
@@ -663,7 +663,7 @@ def delete_route(args):
 
 def create_secret(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Create an instance of the Secret class using the provided arguments
         secret = Secret(
@@ -698,7 +698,7 @@ def create_secret(args):
 
 def list_secrets(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Fetch the list of secrets from the client
         secrets_response = client.list_secrets()
@@ -732,7 +732,7 @@ def list_secrets(args):
 
 def get_secret(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Fetch the secret and mask sensitive data
         secret = client.get_secret(args.api_key)
@@ -751,7 +751,7 @@ def get_secret(args):
 
 def update_secret(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Create an instance of the Secret class
         secret = Secret(
@@ -781,7 +781,7 @@ def update_secret(args):
 
 def delete_secret(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         client.delete_secret(args.provider_name, args.api_key)
         print(f"Secret '{args.api_key}' deleted successfully.")
@@ -796,7 +796,7 @@ def delete_secret(args):
 
 def create_template(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string for config and models
         config_data = json.loads(args.config)
@@ -833,7 +833,7 @@ def create_template(args):
 
 def list_templates(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         templates = client.list_templates()
         print("List of templates:")
@@ -849,7 +849,7 @@ def list_templates(args):
 
 def get_template(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         template = client.get_template(args.name)
         print(f"Template details for '{args.name}':")
@@ -865,7 +865,7 @@ def get_template(args):
 
 def update_template(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         # Parse the JSON string for config and models
         config_data = json.loads(args.config)
@@ -900,7 +900,7 @@ def update_template(args):
 
 def delete_template(args):
     try:
-        client = get_javelin_client()
+        client = get_highflame_client()
 
         client.delete_template(args.name)
         print(f"Template '{args.name}' deleted successfully.")

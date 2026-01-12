@@ -1,7 +1,10 @@
 import json
+import logging
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 import httpx
+
+logger = logging.getLogger(__name__)
 from highflame.exceptions import (
     BadRequest,
     InternalServerError,
@@ -249,6 +252,7 @@ class RouteService:
         stream_response_path: Optional[str] = None,
     ) -> Union[Dict[str, Any], Generator[str, None, None]]:
         """Query a route synchronously."""
+        logger.debug(f"Querying route: {route_name}, stream={stream}")
         self._validate_route_name(route_name)
 
         response = self.client._send_request_sync(
