@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "javelin-sdk"
-version = "0.2.7-dev"
-description = "Python client for Javelin"
+version = "RELEASE_VERSION"
+description = "Python client for Highflame"
 authors = ["Sharath Rajasekar <sharath@highflame.com>"]
 readme = "README.md"
 license = "Apache-2.0"
