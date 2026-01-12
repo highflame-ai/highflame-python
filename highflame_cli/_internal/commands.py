@@ -1,17 +1,17 @@
 import json
 from pathlib import Path
 
-from highflame_sdk.client import JavelinClient
-from highflame_sdk.exceptions import (
+from highflame.client import Highflame
+from highflame.exceptions import (
     BadRequest,
     NetworkError,
     UnauthorizedError,
 )
-from highflame_sdk.models import (
+from highflame.models import (
     AWSConfig,
     Gateway,
     GatewayConfig,
-    JavelinConfig,
+    Config,
     Customer,
     Model,
     Provider,
@@ -96,13 +96,13 @@ def get_javelin_client_aispm():
 
     javelin_api_key = selected_gateway.get("api_key_value", "placeholder")
 
-    # Initialize and return the JavelinClient
-    config = JavelinConfig(
+    # Initialize and return the Highflame client
+    config = Config(
         base_url=base_url,
-        javelin_api_key=javelin_api_key,
+        api_key=javelin_api_key,
     )
 
-    client = JavelinClient(config)
+    client = Highflame(config)
 
     # Store account_id in client for AISPM service to use
     if account_id:
@@ -165,13 +165,13 @@ def get_javelin_client():
             ),
         )
 
-    # Initialize the JavelinClient when required
-    config = JavelinConfig(
+    # Initialize the Highflame client when required
+    config = Config(
         base_url=base_url,
-        javelin_api_key=javelin_api_key,
+        api_key=javelin_api_key,
     )
 
-    return JavelinClient(config)
+    return Highflame(config)
 
 
 def create_customer(args):

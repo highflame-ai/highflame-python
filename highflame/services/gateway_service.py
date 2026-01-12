@@ -1,5 +1,5 @@
 import httpx
-from highflame_sdk.exceptions import (
+from highflame.exceptions import (
     BadRequest,
     GatewayAlreadyExistsError,
     GatewayNotFoundError,
@@ -7,7 +7,7 @@ from highflame_sdk.exceptions import (
     RateLimitExceededError,
     UnauthorizedError,
 )
-from highflame_sdk.models import Gateway, Gateways, HttpMethod, Request
+from highflame.models import Gateway, Gateways, HttpMethod, Request
 
 
 class GatewayService:

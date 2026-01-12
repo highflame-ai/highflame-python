@@ -1,5 +1,5 @@
 import httpx
-from highflame_sdk.exceptions import (
+from highflame.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
@@ -7,7 +7,7 @@ from highflame_sdk.exceptions import (
     TemplateNotFoundError,
     UnauthorizedError,
 )
-from highflame_sdk.models import HttpMethod, Request, Template, Templates
+from highflame.models import HttpMethod, Request, Template, Templates
 
 
 class TemplateService:

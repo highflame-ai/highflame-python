@@ -10,18 +10,18 @@ import httpx
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
-from highflame_sdk.chat_completions import Chat, Completions, Embeddings
-from highflame_sdk.models import HttpMethod, Config, Request
-from highflame_sdk.services.gateway_service import GatewayService
-from highflame_sdk.services.modelspec_service import ModelSpecService
-from highflame_sdk.services.provider_service import ProviderService
-from highflame_sdk.services.route_service import RouteService
-from highflame_sdk.services.secret_service import SecretService
-from highflame_sdk.services.template_service import TemplateService
-from highflame_sdk.services.trace_service import TraceService
-from highflame_sdk.services.aispm_service import AISPMService
-from highflame_sdk.services.guardrails_service import GuardrailsService
-from highflame_sdk.tracing_setup import configure_span_exporter
+from highflame.chat_completions import Chat, Completions, Embeddings
+from highflame.models import HttpMethod, Config, Request
+from highflame.services.gateway_service import GatewayService
+from highflame.services.modelspec_service import ModelSpecService
+from highflame.services.provider_service import ProviderService
+from highflame.services.route_service import RouteService
+from highflame.services.secret_service import SecretService
+from highflame.services.template_service import TemplateService
+from highflame.services.trace_service import TraceService
+from highflame.services.aispm_service import AISPMService
+from highflame.services.guardrails_service import GuardrailsService
+from highflame.tracing_setup import configure_span_exporter
 
 API_BASEURL = "https://api.highflame.app"
 API_BASE_PATH = "/v1"

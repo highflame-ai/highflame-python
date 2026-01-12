@@ -1,5 +1,5 @@
-from highflame_sdk.client import Highflame
-from highflame_sdk.exceptions import (
+from highflame.client import Highflame
+from highflame.exceptions import (
     BadRequest,
     GatewayAlreadyExistsError,
     GatewayNotFoundError,
@@ -18,7 +18,7 @@ from highflame_sdk.exceptions import (
     UnauthorizedError,
     ValidationError,
 )
-from highflame_sdk.models import (
+from highflame.models import (
     Gateway,
     Gateways,
     Config,

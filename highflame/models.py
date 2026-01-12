@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum, auto
 from typing import Any, Dict, List, Optional
 
-from highflame_sdk.exceptions import UnauthorizedError
+from highflame.exceptions import UnauthorizedError
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 

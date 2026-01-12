@@ -1,14 +1,14 @@
 from typing import Any
 
 import httpx
-from highflame_sdk.exceptions import (
+from highflame.exceptions import (
     BadRequest,
     InternalServerError,
     RateLimitExceededError,
     TraceNotFoundError,
     UnauthorizedError,
 )
-from highflame_sdk.models import HttpMethod, Request, Template
+from highflame.models import HttpMethod, Request, Template
 
 
 class TraceService:

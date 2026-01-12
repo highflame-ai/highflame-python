@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 import httpx
-from highflame_sdk.exceptions import (
+from highflame.exceptions import (
     BadRequest,
     InternalServerError,
     ProviderAlreadyExistsError,
@@ -9,7 +9,7 @@ from highflame_sdk.exceptions import (
     RateLimitExceededError,
     UnauthorizedError,
 )
-from highflame_sdk.models import (
+from highflame.models import (
     EndpointType,
     HttpMethod,
     Provider,

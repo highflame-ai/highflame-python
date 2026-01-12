@@ -1,8 +1,8 @@
 import logging
 from typing import Any, Dict, Generator, List, Optional, Union
 
-from highflame_sdk.model_adapters import ModelTransformer, TransformationRuleManager
-from highflame_sdk.models import EndpointType
+from highflame.model_adapters import ModelTransformer, TransformationRuleManager
+from highflame.models import EndpointType
 
 logger = logging.getLogger(__name__)
 

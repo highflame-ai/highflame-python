@@ -4,16 +4,16 @@ from httpx import Response
 from pydantic import ValidationError as PydanticValidationError
 
 
-class JavelinClientError(Exception):
+class ClientError(Exception):
     """
-    Base exception class for JavelinClient errors.
+    Base exception class for Highflame client errors.
 
     Attributes
     ----------
     message : str
-        The error message associated with the JavelinClient error.
+        The error message associated with the client error.
     response_data : Optional[dict]
-        The response data associated with the JavelinClient error.
+        The response data associated with the client error.
 
     Parameters
     ----------
@@ -59,14 +59,14 @@ class JavelinClientError(Exception):
         return f"{self.message}: {self.response_data}"
 
 
-class GatewayNotFoundError(JavelinClientError):
+class GatewayNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Gateway not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class GatewayAlreadyExistsError(JavelinClientError):
+class GatewayAlreadyExistsError(ClientError):
     def __init__(
         self,
         response: Optional[Response] = None,
@@ -75,28 +75,28 @@ class GatewayAlreadyExistsError(JavelinClientError):
         super().__init__(message=message, response=response)
 
 
-class RouteNotFoundError(JavelinClientError):
+class RouteNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Route not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class RouteAlreadyExistsError(JavelinClientError):
+class RouteAlreadyExistsError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Route already exists"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class ProviderNotFoundError(JavelinClientError):
+class ProviderNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Provider not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class ProviderAlreadyExistsError(JavelinClientError):
+class ProviderAlreadyExistsError(ClientError):
     def __init__(
         self,
         response: Optional[Response] = None,
@@ -105,21 +105,21 @@ class ProviderAlreadyExistsError(JavelinClientError):
         super().__init__(message=message, response=response)
 
 
-class TemplateNotFoundError(JavelinClientError):
+class TemplateNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Template not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class TraceNotFoundError(JavelinClientError):
+class TraceNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Trace not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class TemplateAlreadyExistsError(JavelinClientError):
+class TemplateAlreadyExistsError(ClientError):
     def __init__(
         self,
         response: Optional[Response] = None,
@@ -128,14 +128,14 @@ class TemplateAlreadyExistsError(JavelinClientError):
         super().__init__(message=message, response=response)
 
 
-class SecretNotFoundError(JavelinClientError):
+class SecretNotFoundError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Secret not found"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class SecretAlreadyExistsError(JavelinClientError):
+class SecretAlreadyExistsError(ClientError):
     def __init__(
         self,
         response: Optional[Response] = None,
@@ -144,28 +144,28 @@ class SecretAlreadyExistsError(JavelinClientError):
         super().__init__(message=message, response=response)
 
 
-class NetworkError(JavelinClientError):
+class NetworkError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Connection error"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class BadRequest(JavelinClientError):
+class BadRequest(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Bad Request"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class RateLimitExceededError(JavelinClientError):
+class RateLimitExceededError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Rate limit exceeded"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class InternalServerError(JavelinClientError):
+class InternalServerError(ClientError):
     def __init__(
         self,
         response: Optional[Response] = None,
@@ -174,14 +174,14 @@ class InternalServerError(JavelinClientError):
         super().__init__(message=message, response=response)
 
 
-class MethodNotAllowedError(JavelinClientError):
+class MethodNotAllowedError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Method not allowed"
     ) -> None:
         super().__init__(message=message, response=response)
 
 
-class UnauthorizedError(JavelinClientError):
+class UnauthorizedError(ClientError):
     def __init__(
         self, response: Optional[Response] = None, message: str = "Access denied"
     ) -> None:
@@ -192,7 +192,7 @@ class UnauthorizedError(JavelinClientError):
         return self.message
 
 
-class ValidationError(JavelinClientError):
+class ValidationError(ClientError):
     def __init__(
         self, error: PydanticValidationError, message: str = "Validation error occurred"
     ) -> None:
