@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+# CLI imports from the public SDK API - this ensures CLI works as a separate package
+# that depends on the highflame SDK package
 from highflame.client import Highflame
 from highflame.exceptions import (
     BadRequest,
