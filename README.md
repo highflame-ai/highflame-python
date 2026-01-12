@@ -57,13 +57,13 @@ response = client.query_route(
 highflame auth
 
 # List routes
-highflame routes list
+highflame route list
 
 # Create a route
-highflame routes create --name my_route --file route.json
+highflame route create --name my_route --file route.json
 
 # Get route details
-highflame routes get --name my_route
+highflame route get --name my_route
 ```
 
 ---
@@ -211,7 +211,7 @@ javelin routes list
 
 ```bash
 highflame auth
-highflame routes list
+highflame route list
 ```
 
 ### Exception Handling Changes
