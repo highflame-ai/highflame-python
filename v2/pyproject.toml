@@ -13,6 +13,8 @@ packages = [
     { include = "highflame_cli" },
 ]
 
+# CLI will be separated into highflame-cli package in the future
+# See CLI_PYPROJECT.toml and CLI_SEPARATION_PLAN.md for details
 [tool.poetry.scripts]
 highflame = "highflame_cli.cli:main"
 
