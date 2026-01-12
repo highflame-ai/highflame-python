@@ -11,7 +11,7 @@ from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from highflame_sdk.chat_completions import Chat, Completions, Embeddings
-from highflame_sdk.models import HttpMethod, JavelinConfig, Request
+from highflame_sdk.models import HttpMethod, Config, Request
 from highflame_sdk.services.gateway_service import GatewayService
 from highflame_sdk.services.modelspec_service import ModelSpecService
 from highflame_sdk.services.provider_service import ProviderService
@@ -23,12 +23,12 @@ from highflame_sdk.services.aispm_service import AISPMService
 from highflame_sdk.services.guardrails_service import GuardrailsService
 from highflame_sdk.tracing_setup import configure_span_exporter
 
-API_BASEURL = "https://api-dev.javelin.live"
+API_BASEURL = "https://api.highflame.app"
 API_BASE_PATH = "/v1"
 API_TIMEOUT = 10
 
 
-class JavelinRequestWrapper:
+class RequestWrapper:
     """A wrapper around Botocore's request object to store additional metadata."""
 
     def __init__(self, original_request, span):
@@ -36,7 +36,7 @@ class JavelinRequestWrapper:
         self.span = span
 
 
-class JavelinClient:
+class Highflame:
     BEDROCK_RUNTIME_OPERATIONS = frozenset(
         {"InvokeModel", "InvokeModelWithResponseStream", "Converse", "ConverseStream"}
     )
@@ -74,24 +74,20 @@ class JavelinClient:
         "images.create_variation": "image_variation",
     }
 
-    def __init__(self, config: JavelinConfig) -> None:
+    def __init__(self, config: Config) -> None:
         self.config = config
         self.base_url = urljoin(config.base_url, config.api_version or "/v1")
 
-        # Use properties that support both old and new field names
-        api_key = config.api_key
-        virtual_api_key = config.virtual_api_key
-        
         # Send both headers for backward compatibility (backend may accept either)
         self._headers = {
-            "x-highflame-apikey": api_key,  # New header
-            "x-javelin-apikey": api_key,     # Old header (for backward compatibility)
+            "x-highflame-apikey": config.api_key,  # New header
+            "x-javelin-apikey": config.api_key,     # Old header (for backward compatibility)
         }
         if config.llm_api_key:
             self._headers["Authorization"] = f"Bearer {config.llm_api_key}"
-        if virtual_api_key:
-            self._headers["x-highflame-virtualapikey"] = virtual_api_key  # New header
-            self._headers["x-javelin-virtualapikey"] = virtual_api_key     # Old header (for backward compatibility)
+        if config.virtual_api_key:
+            self._headers["x-highflame-virtualapikey"] = config.virtual_api_key  # New header
+            self._headers["x-javelin-virtualapikey"] = config.virtual_api_key     # Old header (for backward compatibility)
         self._client = None
         self._aclient = None
         self.bedrock_client = None
@@ -145,13 +141,13 @@ class JavelinClient:
             )
         return self._aclient
 
-    async def __aenter__(self) -> "JavelinClient":
+    async def __aenter__(self) -> "Highflame":
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.aclose()
 
-    def __enter__(self) -> "JavelinClient":
+    def __enter__(self) -> "Highflame":
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -193,7 +189,8 @@ class JavelinClient:
         openai_client._custom_headers.update(self._headers)
 
         if route_name is not None:
-            openai_client._custom_headers["x-javelin-route"] = route_name
+            openai_client._custom_headers["x-highflame-route"] = route_name  # New header
+            openai_client._custom_headers["x-javelin-route"] = route_name     # Old header (for backward compatibility)
 
         # Ensure the client uses the custom headers
         if hasattr(openai_client, "default_headers"):
@@ -283,7 +280,8 @@ class JavelinClient:
     def _setup_custom_headers(self, openai_client, model):
         """Setup custom headers for the OpenAI client."""
         if model and hasattr(openai_client, "_custom_headers"):
-            openai_client._custom_headers["x-javelin-model"] = model
+            openai_client._custom_headers["x-highflame-model"] = model  # New header
+            openai_client._custom_headers["x-javelin-model"] = model     # Old header (for backward compatibility)
 
         if not hasattr(openai_client, "_custom_headers"):
             return
@@ -773,11 +771,13 @@ class JavelinClient:
                 # Construct the base URL (scheme + netloc)
                 base_url = f"{original_url.scheme}://{original_url.netloc}"
 
-                # Set the header
-                request.headers["x-javelin-provider"] = base_url
+                # Set the header (dual support for backward compatibility)
+                request.headers["x-highflame-provider"] = base_url  # New header
+                request.headers["x-javelin-provider"] = base_url     # Old header (for backward compatibility)
 
                 if self.use_default_bedrock_route and self.default_bedrock_route:
-                    request.headers["x-javelin-route"] = self.default_bedrock_route
+                    request.headers["x-highflame-route"] = self.default_bedrock_route  # New header
+                    request.headers["x-javelin-route"] = self.default_bedrock_route     # Old header (for backward compatibility)
 
                 path = original_url.path
                 path = unquote(path)
@@ -788,7 +788,8 @@ class JavelinClient:
 
                 if model_id:
                     model_id = re.sub(r"-\d{8}(?=-)", "", model_id)
-                    request.headers["x-javelin-model"] = model_id
+                    request.headers["x-highflame-model"] = model_id  # New header
+                    request.headers["x-javelin-model"] = model_id     # Old header (for backward compatibility)
 
                 # Update the request URL to use the Javelin endpoint.
                 parsed_base = urlparse(self.base_url)
@@ -827,7 +828,7 @@ class JavelinClient:
             span = self.tracer.start_span(operation_name, kind=SpanKind.CLIENT)
 
             # Store it in the context
-            context["javelin_request_wrapper"] = JavelinRequestWrapper(None, span)
+            context["javelin_request_wrapper"] = RequestWrapper(None, span)
 
         def bedrock_after_call(**kwargs):
             """

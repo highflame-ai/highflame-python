@@ -1,4 +1,4 @@
-from highflame_sdk.client import JavelinClient
+from highflame_sdk.client import Highflame
 from highflame_sdk.exceptions import (
     BadRequest,
     GatewayAlreadyExistsError,
@@ -21,7 +21,7 @@ from highflame_sdk.exceptions import (
 from highflame_sdk.models import (
     Gateway,
     Gateways,
-    JavelinConfig,
+    Config,
     Provider,
     Providers,
     QueryResponse,
@@ -63,6 +63,6 @@ __all__ = [
     "Secrets",
     "QueryBody",
     "QueryResponse",
-    "JavelinClient",
-    "JavelinConfig",
+    "Highflame",
+    "Config",
 ]
