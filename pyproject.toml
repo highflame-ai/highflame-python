@@ -9,12 +9,8 @@ homepage = "https://highflame.com"
 repository = "https://github.com/highflame-ai/highflame-python"
 keywords = ["llm", "gateway", "ai", "api", "routing"]
 packages = [
-    { include = "highflame_cli" },
     { include = "highflame" },
 ]
-
-[tool.poetry.scripts]
-highflame = "highflame_cli.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"
