@@ -1,0 +1,36 @@
+# This file shows what the future CLI-only package pyproject.toml would look like
+# Once CLI is separated into its own package: highflame-cli
+# This serves as a reference for the CLI package separation plan
+
+[tool.poetry]
+name = "highflame-cli"
+version = "2.0.0"
+description = "Command-line interface for Highflame - LLM Gateway Management"
+authors = ["Sharath Rajasekar <sharath@highflame.com>"]
+readme = "README.md"
+license = "Apache-2.0"
+homepage = "https://highflame.com"
+repository = "https://github.com/highflame-ai/highflame-cli"
+packages = [
+    { include = "highflame_cli" },
+]
+
+[tool.poetry.scripts]
+highflame = "highflame_cli.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+highflame = "^2.0.0"
+requests = "^2.32.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "24.3.0"
+flake8 = "^7.3.0"
+pre-commit = "^3.3.1"
+pytest = "^8.3.5"
+pytest-mock = "^3.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

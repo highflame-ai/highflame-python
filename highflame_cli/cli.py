@@ -100,7 +100,7 @@ def main():
         description="The CLI for HighFlame.",
         formatter_class=argparse.RawTextHelpFormatter,
         epilog=(
-            "See https://docs.getjavelin.io/docs/javelin-python/cli for more "
+            "See https://docs.highflame.ai/ for more "
             "detailed documentation."
         ),
     )

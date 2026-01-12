@@ -26,13 +26,20 @@ class AISPMService:
         # Check if account_id is stored in client (set by get_highflame_client_aispm)
         account_id = getattr(self.client, "_aispm_account_id", None)
         if account_id:
-            headers["x-javelin-accountid"] = account_id
+            headers["x-highflame-accountid"] = account_id  # New header
+            headers["x-javelin-accountid"] = account_id     # Old header (for backward compatibility)
+            headers["x-highflame-user"] = getattr(
+                self.client, "_aispm_user", "test-user"
+            )  # New header
             headers["x-javelin-user"] = getattr(
                 self.client, "_aispm_user", "test-user"
-            )
+            )     # Old header (for backward compatibility)
+            headers["x-highflame-userrole"] = getattr(
+                self.client, "_aispm_userrole", "org:superadmin"
+            )  # New header
             headers["x-javelin-userrole"] = getattr(
                 self.client, "_aispm_userrole", "org:superadmin"
-            )
+            )     # Old header (for backward compatibility)
         return headers
 
     def _handle_response(self, response: Response) -> None:

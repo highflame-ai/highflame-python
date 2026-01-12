@@ -22,12 +22,12 @@ class RouteService:
         self.client = client
 
     def _process_route_response_ok(self, response: httpx.Response) -> str:
-        """Process a successful response from the Javelin API."""
+        """Process a successful response from the Highflame API."""
         self._handle_route_response(response)
         return response.text
 
     def _process_route_response(self, response: httpx.Response) -> Route:
-        """Process a response from the Javelin API and return a Route object."""
+        """Process a response from the Highflame API and return a Route object."""
         self._handle_route_response(response)
         return Route(**response.json())
 
@@ -42,7 +42,7 @@ class RouteService:
 
     def _process_route_response_json(self, response: httpx.Response) -> Dict[str, Any]:
         """
-        Process a successful response from the Javelin API.
+        Process a successful response from the Highflame API.
         Parse body into a Dict[str, Any] object and return it.
         This is for Query() requests.
         """

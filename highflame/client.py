@@ -1,6 +1,7 @@
 import functools
 import inspect
 import json
+import logging
 import re
 import asyncio
 from typing import Any, Coroutine, Dict, Optional, Union
@@ -402,7 +403,7 @@ class Highflame:
         try:
             response_data = self._extract_response_data(response)
             if response_data is None:
-                span.set_attribute("javelin.response.body", str(response))
+                span.set_attribute("highflame.response.body", str(response))
                 return
 
             self._set_basic_response_attributes(span, response_data)
@@ -412,7 +413,7 @@ class Highflame:
 
         except Exception as e:
             span.set_attribute("javelin.response.body", str(response))
-            span.set_attribute("javelin.error", str(e))
+            span.set_attribute("highflame.error", str(e))
 
     def _extract_response_data(self, response):
         """Extract response data from various response types."""
@@ -761,12 +762,12 @@ class Highflame:
         """Create request handlers for bedrock operations."""
 
         def add_custom_headers(request: Any, **kwargs) -> None:
-            """Add Javelin headers to each request."""
+            """Add Highflame headers to each request."""
             request.headers.update(self._headers)
 
         def override_endpoint_url(request: Any, **kwargs) -> None:
             """
-            Redirect Bedrock operations to the Javelin endpoint
+            Redirect Bedrock operations to the Highflame endpoint
             while preserving path and query.
             """
             try:
@@ -795,7 +796,7 @@ class Highflame:
                     request.headers["x-highflame-model"] = model_id  # New header
                     request.headers["x-javelin-model"] = model_id     # Old header (for backward compatibility)
 
-                # Update the request URL to use the Javelin endpoint.
+                # Update the request URL to use the Highflame endpoint.
                 parsed_base = urlparse(self.base_url)
                 updated_url = original_url._replace(
                     scheme=parsed_base.scheme,
@@ -984,7 +985,7 @@ class Highflame:
         if (
             request.route
             and request.route.startswith("v1/admin/aispm")
-            and "x-javelin-accountid" in headers
+            and ("x-highflame-accountid" in headers or "x-javelin-accountid" in headers)
         ):
             # Remove both old and new headers for backward compatibility
             headers.pop("x-javelin-apikey", None)
