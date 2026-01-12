@@ -1,0 +1,60 @@
+import os
+import json
+from typing import Dict, Any
+from highflame import Highflame, Config
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Helper for pretty print
+
+
+def print_response(provider: str, response: Dict[str, Any]) -> None:
+    print(f"=== Response from {provider} ===")
+    print(json.dumps(response, indent=2))
+
+
+# Highflame client config
+config = Config(
+    base_url=os.getenv("HIGHFLAME_BASE_URL"),
+    api_key=os.getenv("HIGHFLAME_API_KEY"),
+    llm_api_key=os.getenv("ANTHROPIC_API_KEY"),
+    timeout=120,
+)
+client = Highflame(config)
+
+# Proper headers (must match Anthropic's expectations)
+custom_headers = {
+    "Content-Type": "application/json",
+    "x-highflame-route": "anthropic_univ",
+    "x-highflame-model": "claude-3-5-sonnet-20240620",
+    "x-highflame-provider": "https://api.anthropic.com/v1",
+    "x-api-key": os.getenv("ANTHROPIC_API_KEY"),  # For Anthropic model
+    "anthropic-version": "2023-06-01",
+}
+client.set_headers(custom_headers)
+
+# Claude-compatible messages format
+query_body = {
+    "model": "claude-3-5-sonnet-20240620",
+    "max_tokens": 300,
+    "temperature": 0.7,
+    "system": "You are a helpful assistant.",
+    "messages": [
+        {
+            "role": "user",
+            "content": [{"type": "text", "text": "What are the three primary colors?"}],
+        }
+    ],
+}
+
+# Invoke
+try:
+    response = client.query_unified_endpoint(
+        provider_name="anthropic",
+        endpoint_type="messages",
+        query_body=query_body,
+    )
+    print_response("Anthropic", response)
+except Exception as e:
+    print(f"Anthropic query failed: {str(e)}")
