@@ -3,13 +3,13 @@ name = "highflame-cli"
 version = "2.0.0"
 description = "Command-line interface for Highflame - LLM Gateway Management"
 authors = ["Sharath Rajasekar <sharath@highflame.com>"]
-readme = "../README.md"
+readme = "../../README.md"
 license = "Apache-2.0"
 homepage = "https://highflame.com"
 repository = "https://github.com/highflame-ai/highflame-python"
 keywords = ["cli", "llm", "gateway", "ai", "command-line"]
 packages = [
-    { include = "highflame_cli", from = ".." },
+    { include = "highflame_cli" },
 ]
 
 [tool.poetry.scripts]
