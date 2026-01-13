@@ -17,11 +17,23 @@ Highflame Documentation: [https://docs.highflame.ai/](https://docs.highflame.ai/
 
 ### Installation
 
+**SDK:**
+
 ```bash
 pip install highflame
 ```
 
+**CLI:**
+
+```bash
+pip install highflame-cli
+```
+
+> **Note:** The CLI package (`highflame-cli`) depends on the SDK package (`highflame`), so installing the CLI will automatically install the SDK as well.
+
 ### Basic Usage
+
+**Using the SDK:**
 
 ```python
 from highflame import Highflame, Config
@@ -36,6 +48,22 @@ response = client.query_route(
     route_name="my_route",
     query_body={"messages": [{"role": "user", "content": "Hello!"}], "model": "gpt-4"}
 )
+```
+
+**Using the CLI:**
+
+```bash
+# Authenticate
+highflame-cli auth
+
+# List routes
+highflame-cli route list
+
+# Create a route
+highflame-cli route create --name my_route --file route.json
+
+# Get route details
+highflame-cli route get --name my_route
 ```
 
 ---
@@ -549,7 +577,7 @@ logger.setLevel(logging.INFO)
 
 ### CLI Improvements
 
-- [ ] **CLI Separation**: Separate CLI into its own `highflame-cli` package. Create separate repository, package, and PyPI distribution.
+- [x] **CLI Separation**: Separate CLI into its own `highflame-cli` package. Package structure separated, ready for independent distribution.
 
 - [ ] **CLI Error Messages**: Improve CLI error messages with troubleshooting hints and actionable guidance.
 

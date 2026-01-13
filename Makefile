@@ -19,15 +19,35 @@ test:
 	poetry run pytest tests
 
 build:
-	poetry build
+	@echo "Building SDK..."
+	cd sdk && poetry build
+	@echo "Building CLI..."
+	cd cli/highflame_cli && poetry build
+
+build-sdk:
+	cd sdk && poetry build
+
+build-cli:
+	cd cli/highflame_cli && poetry build
 
 clean:
 	rm -rf dist/
 	rm -rf build/
 	rm -rf *.egg-info/
+	rm -rf sdk/dist/ sdk/build/ sdk/*.egg-info/
+	rm -rf cli/highflame_cli/dist/ cli/highflame_cli/build/ cli/highflame_cli/*.egg-info/
 
 install:
-	poetry install
+	@echo "Installing SDK..."
+	cd sdk && poetry install
+	@echo "Installing CLI..."
+	cd cli/highflame_cli && poetry install
+
+install-sdk:
+	cd sdk && poetry install
+
+install-cli:
+	cd cli/highflame_cli && poetry install
 
 install-wheel:
-	pip install dist/highflame_sdk-*.whl --force-reinstall
+	pip install sdk/dist/highflame-*.whl --force-reinstall
