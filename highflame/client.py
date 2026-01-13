@@ -86,13 +86,16 @@ class Highflame:
         # Send both headers for backward compatibility (backend may accept either)
         self._headers = {
             "x-highflame-apikey": config.api_key,  # New header
-            "x-javelin-apikey": config.api_key,     # Old header (for backward compatibility)
+            # Old header (for backward compatibility)
+            "x-javelin-apikey": config.api_key,
         }
         if config.llm_api_key:
             self._headers["Authorization"] = f"Bearer {config.llm_api_key}"
         if config.virtual_api_key:
-            self._headers["x-highflame-virtualapikey"] = config.virtual_api_key  # New header
-            self._headers["x-javelin-virtualapikey"] = config.virtual_api_key     # Old header (for backward compatibility)
+            # New header
+            self._headers["x-highflame-virtualapikey"] = config.virtual_api_key
+            # Old header (for backward compatibility)
+            self._headers["x-javelin-virtualapikey"] = config.virtual_api_key
         self._client = None
         self._aclient = None
         self.bedrock_client = None
@@ -194,8 +197,10 @@ class Highflame:
         openai_client._custom_headers.update(self._headers)
 
         if route_name is not None:
-            openai_client._custom_headers["x-highflame-route"] = route_name  # New header
-            openai_client._custom_headers["x-javelin-route"] = route_name     # Old header (for backward compatibility)
+            # New header
+            openai_client._custom_headers["x-highflame-route"] = route_name
+            # Old header (for backward compatibility)
+            openai_client._custom_headers["x-javelin-route"] = route_name
 
         # Ensure the client uses the custom headers
         if hasattr(openai_client, "default_headers"):
@@ -285,8 +290,10 @@ class Highflame:
     def _setup_custom_headers(self, openai_client, model):
         """Setup custom headers for the OpenAI client."""
         if model and hasattr(openai_client, "_custom_headers"):
-            openai_client._custom_headers["x-highflame-model"] = model  # New header
-            openai_client._custom_headers["x-javelin-model"] = model     # Old header (for backward compatibility)
+            # New header
+            openai_client._custom_headers["x-highflame-model"] = model
+            # Old header (for backward compatibility)
+            openai_client._custom_headers["x-javelin-model"] = model
 
         if not hasattr(openai_client, "_custom_headers"):
             return
@@ -777,12 +784,20 @@ class Highflame:
                 base_url = f"{original_url.scheme}://{original_url.netloc}"
 
                 # Set the header (dual support for backward compatibility)
-                request.headers["x-highflame-provider"] = base_url  # New header
-                request.headers["x-javelin-provider"] = base_url     # Old header (for backward compatibility)
+                # New header
+                request.headers["x-highflame-provider"] = base_url
+                # Old header (for backward compatibility)
+                request.headers["x-javelin-provider"] = base_url
 
                 if self.use_default_bedrock_route and self.default_bedrock_route:
-                    request.headers["x-highflame-route"] = self.default_bedrock_route  # New header
-                    request.headers["x-javelin-route"] = self.default_bedrock_route     # Old header (for backward compatibility)
+                    # New header
+                    request.headers["x-highflame-route"] = (
+                        self.default_bedrock_route
+                    )
+                    # Old header (for backward compatibility)
+                    request.headers["x-javelin-route"] = (
+                        self.default_bedrock_route
+                    )
 
                 path = original_url.path
                 path = unquote(path)
@@ -793,8 +808,10 @@ class Highflame:
 
                 if model_id:
                     model_id = re.sub(r"-\d{8}(?=-)", "", model_id)
-                    request.headers["x-highflame-model"] = model_id  # New header
-                    request.headers["x-javelin-model"] = model_id     # Old header (for backward compatibility)
+                    # New header
+                    request.headers["x-highflame-model"] = model_id
+                    # Old header (for backward compatibility)
+                    request.headers["x-javelin-model"] = model_id
 
                 # Update the request URL to use the Highflame endpoint.
                 parsed_base = urlparse(self.base_url)

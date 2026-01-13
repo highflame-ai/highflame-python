@@ -14,9 +14,14 @@ from highflame_sdk import (
 
 dotenv.load_dotenv()
 
-# Retrieve environment variables (backward compatible: check HIGHFLAME_* first, fall back to JAVELIN_*)
-javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
-javelin_virtualapikey = os.getenv("HIGHFLAME_VIRTUALAPIKEY") or os.getenv("JAVELIN_VIRTUALAPIKEY")
+# Retrieve environment variables (backward compatible:
+# check HIGHFLAME_* first, fall back to JAVELIN_*)
+javelin_api_key = (
+    os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+)
+javelin_virtualapikey = (
+    os.getenv("HIGHFLAME_VIRTUALAPIKEY") or os.getenv("JAVELIN_VIRTUALAPIKEY")
+)
 llm_api_key = os.getenv("OPENAI_API_KEY")
 
 

@@ -28,7 +28,10 @@ def init_bedrock():
 
     # Initialize Javelin client
     config = JavelinConfig(
-        javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")  # add your API key here
+        # add your API key here
+        javelin_api_key=(
+            os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+        )
     )
     javelin_client = JavelinClient(config)
 

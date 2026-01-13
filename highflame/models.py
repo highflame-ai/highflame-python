@@ -3,7 +3,7 @@ from enum import Enum, auto
 from typing import Any, Dict, List, Optional
 
 from highflame.exceptions import UnauthorizedError
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class GatewayConfig(BaseModel):

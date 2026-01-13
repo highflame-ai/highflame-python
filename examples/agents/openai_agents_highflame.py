@@ -23,12 +23,17 @@ load_dotenv()
 set_default_openai_api("chat_completions")
 
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
-highflame_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY", "")
-highflame_base_url = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL", "")
+highflame_api_key = (
+    os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY", "")
+)
+highflame_base_url = (
+    os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL", "")
+)
 
 if not (openai_api_key and highflame_api_key and highflame_base_url):
     raise ValueError(
-        "Missing OPENAI_API_KEY, HIGHFLAME_API_KEY (or JAVELIN_API_KEY), or HIGHFLAME_BASE_URL (or JAVELIN_BASE_URL) in .env"
+        "Missing OPENAI_API_KEY, HIGHFLAME_API_KEY (or JAVELIN_API_KEY), "
+        "or HIGHFLAME_BASE_URL (or JAVELIN_BASE_URL) in .env"
     )
 
 # Create async OpenAI client

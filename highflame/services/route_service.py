@@ -3,8 +3,8 @@ import logging
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 import httpx
+from jsonpath_ng import parse
 
-logger = logging.getLogger(__name__)
 from highflame.exceptions import (
     BadRequest,
     InternalServerError,
@@ -14,7 +14,8 @@ from highflame.exceptions import (
     UnauthorizedError,
 )
 from highflame.models import HttpMethod, Request, Route, Routes, UnivModelConfig
-from jsonpath_ng import parse
+
+logger = logging.getLogger(__name__)
 
 
 class RouteService:

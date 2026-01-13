@@ -21,7 +21,10 @@ def init_sync_openai_client():
         # This client is configured for chat completions.
         return OpenAI(
             api_key=openai_api_key,
-            base_url=f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}/v1",
+            base_url=(
+                f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}"
+                "/v1"
+            ),
             default_headers=javelin_headers,
         )
     except Exception as e:
@@ -32,11 +35,16 @@ def init_async_openai_client():
     """Initialize and return an asynchronous OpenAI client with Javelin headers."""
     try:
         openai_api_key = os.getenv("OPENAI_API_KEY")
-        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+        javelin_api_key = (
+            os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+        )
         javelin_headers = {"x-javelin-apikey": javelin_api_key}
         return AsyncOpenAI(
             api_key=openai_api_key,
-            base_url=f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}/v1",
+            base_url=(
+                f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}"
+                "/v1"
+            ),
             default_headers=javelin_headers,
         )
     except Exception as e:

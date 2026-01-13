@@ -56,7 +56,10 @@ def get_bedrock_client():
 
         aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID", "YOUR_ACCESS_KEY")
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY", "YOUR_SECRET_KEY")
-        bedrock_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY", "YOUR_BEDROCK_API_KEY")
+        bedrock_api_key = (
+            os.getenv("HIGHFLAME_API_KEY")
+            or os.getenv("JAVELIN_API_KEY", "YOUR_BEDROCK_API_KEY")
+        )
 
         custom_headers = {
             "x-javelin-apikey": bedrock_api_key,
@@ -66,7 +69,10 @@ def get_bedrock_client():
         client = boto3.client(
             service_name="bedrock-runtime",
             region_name="us-east-1",
-            endpoint_url=os.path.join(os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"), "v1"),
+            endpoint_url=os.path.join(
+                os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+                "v1",
+            ),
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
         )

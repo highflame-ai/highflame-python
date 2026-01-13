@@ -5,15 +5,16 @@ import os
 from typing import Optional
 
 from opentelemetry import trace
-
-logger = logging.getLogger(__name__)
-
 # from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 # Use the HTTP exporter instead of the gRPC one
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+    OTLPSpanExporter,
+)
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+logger = logging.getLogger(__name__)
 
 # --- OpenTelemetry Setup ---
 # TRACES_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT",

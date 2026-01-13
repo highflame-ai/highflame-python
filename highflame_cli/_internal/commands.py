@@ -28,7 +28,8 @@ from pydantic import ValidationError
 
 
 def get_cache_file():
-    """Get cache file path, checking new location first, then falling back to old location"""
+    """Get cache file path, checking new location first,
+    then falling back to old location"""
     home_dir = Path.home()
     # Try new location first
     new_cache_file = home_dir / ".highflame" / "cache.json"

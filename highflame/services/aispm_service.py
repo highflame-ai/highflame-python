@@ -27,7 +27,8 @@ class AISPMService:
         account_id = getattr(self.client, "_aispm_account_id", None)
         if account_id:
             headers["x-highflame-accountid"] = account_id  # New header
-            headers["x-javelin-accountid"] = account_id     # Old header (for backward compatibility)
+            # Old header (for backward compatibility)
+            headers["x-javelin-accountid"] = account_id
             headers["x-highflame-user"] = getattr(
                 self.client, "_aispm_user", "test-user"
             )  # New header

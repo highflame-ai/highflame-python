@@ -31,7 +31,10 @@ custom_headers = {
     "Content-Type": "application/json",
     "x-javelin-route": "google_univ",
     "x-javelin-provider": "https://generativelanguage.googleapis.com/v1beta/openai",
-    "x-api-key": os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
+    # Use environment variable for security
+    "x-api-key": (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    ),
     # Use environment variable for security
     "Authorization": f"Bearer {os.getenv('GEMINI_API_KEY')}",
 }

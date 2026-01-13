@@ -19,9 +19,14 @@ client = JavelinClient(config)
 
 # Initialize Javelin Client
 def initialize_javelin_client():
-    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    )
+    base_url = (
+        os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
+    )
     config = JavelinConfig(
-        javelin_api_key=javelin_api_key, base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
+        javelin_api_key=javelin_api_key, base_url=base_url
     )
     return JavelinClient(config)
 

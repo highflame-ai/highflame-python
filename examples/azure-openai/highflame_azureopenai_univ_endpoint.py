@@ -40,7 +40,10 @@ custom_headers = {
     "Content-Type": "application/json",
     "x-javelin-route": "azureopenai_univ",
     "x-javelin-provider": "https://javelinpreview.openai.azure.com/openai",
-    "x-api-key": os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
+    # Use environment variable for security
+    "x-api-key": (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    ),
     "api-key": os.getenv(
         "AZURE_OPENAI_API_KEY"
     ),  # Use environment variable for security
