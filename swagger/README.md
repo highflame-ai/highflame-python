@@ -1,6 +1,6 @@
 # Swagger Model Sync
 
-This directory contains a script (`sync_models.py`) for synchronizing Python models with a Swagger/OpenAPI specification from javelin admin repo.
+This directory contains a script (`sync_models.py`) for synchronizing Python models with a Swagger/OpenAPI specification from HighFlame admin repo.
 
 ## Purpose
 

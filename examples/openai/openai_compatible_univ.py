@@ -6,7 +6,7 @@
 # pattern regardless of the underlying model provider, with Javelin handling
 # the necessary translations and adaptations behind the scenes.
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 import os
 from typing import Dict, Any
 import json
@@ -20,8 +20,8 @@ def print_response(provider: str, response: Dict[str, Any]) -> None:
 
 # Setup client configuration
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
     llm_api_key=os.getenv("OPENAI_API_KEY"),
     timeout=120,
 )
@@ -31,7 +31,10 @@ custom_headers = {
     "Content-Type": "application/json",
     "x-javelin-route": "openai_univ",
     "x-javelin-provider": "https://api.openai.com/v1",
-    "x-api-key": os.getenv("JAVELIN_API_KEY"),  # Use environment variable for security
+    # Use environment variable for security
+    "x-api-key": (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    ),
     # Use environment variable for security
     "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
 }

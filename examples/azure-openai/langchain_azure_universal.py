@@ -12,8 +12,8 @@ from langchain_openai import AzureChatOpenAI
 print("Initializing environment variables...")
 load_dotenv()
 azure_openai_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
-base_url = os.getenv("JAVELIN_BASE_URL")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+base_url = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
 
 # The name of your Azure deployment (e.g., "gpt35")
 # or whatever you’ve set in Azure. Must also match x-javelin-model if

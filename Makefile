@@ -30,4 +30,4 @@ install:
 	poetry install
 
 install-wheel:
-	pip install dist/javelin_sdk-0.2.6-py3-none-any.whl --force-reinstall
+	pip install dist/highflame-*.whl --force-reinstall

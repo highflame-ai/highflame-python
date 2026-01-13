@@ -16,7 +16,7 @@ def init_azure_client_sync():
     """
     try:
         llm_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        javelin_api_key = os.getenv("JAVELIN_API_KEY")
+        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
         if not llm_api_key or not javelin_api_key:
             raise Exception(
                 "AZURE_OPENAI_API_KEY and JAVELIN_API_KEY must be set in "
@@ -25,7 +25,10 @@ def init_azure_client_sync():
         javelin_headers = {"x-javelin-apikey": javelin_api_key}
         client = AzureOpenAI(
             api_key=llm_api_key,
-            base_url=f"{os.getenv('JAVELIN_BASE_URL')}/v1/query/azure-openai",
+            base_url=(
+                f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}"
+                "/v1/query/azure-openai"
+            ),
             default_headers=javelin_headers,
             api_version="2024-02-15-preview",
         )
@@ -39,7 +42,7 @@ def init_azure_embeddings_client_sync():
     """Initialize a synchronous AzureOpenAI client for embeddings."""
     try:
         llm_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        javelin_api_key = os.getenv("JAVELIN_API_KEY")
+        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
         if not llm_api_key or not javelin_api_key:
             raise Exception(
                 "AZURE_OPENAI_API_KEY and JAVELIN_API_KEY must be set in "
@@ -134,7 +137,7 @@ async def init_async_azure_client():
     """Initialize an asynchronous AzureOpenAI client for chat completions."""
     try:
         llm_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        javelin_api_key = os.getenv("JAVELIN_API_KEY")
+        javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
         if not llm_api_key or not javelin_api_key:
             raise Exception(
                 "AZURE_OPENAI_API_KEY and JAVELIN_API_KEY must be set in "
@@ -144,7 +147,10 @@ async def init_async_azure_client():
         # Include the API version in the base URL for the async client.
         client = AsyncOpenAI(
             api_key=llm_api_key,
-            base_url=f"{os.getenv('JAVELIN_BASE_URL')}/v1/query/azure-openai",
+            base_url=(
+                f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}"
+                "/v1/query/azure-openai"
+            ),
             default_headers=javelin_headers,
         )
         return client

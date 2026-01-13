@@ -1,13 +1,13 @@
 import base64
 from openai import OpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 import os
 import dotenv
 
 dotenv.load_dotenv()
 
 # Load API keys from environment variables
-JAVELIN_API_KEY = os.getenv("JAVELIN_API_KEY")
+JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 LLM_API_KEY = os.getenv("LLM_API_KEY")
 BASE_URL = os.getenv("BASE_URL")
 

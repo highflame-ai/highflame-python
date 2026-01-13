@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 
@@ -13,7 +13,10 @@ def initialize_client():
     Creates the AzureOpenAI client and registers it with Javelin.
     Returns the AzureOpenAI client object if successful, else None.
     """
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")  # add your javelin api key here
+    # add your API key here
+    javelin_api_key = (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    )
     azure_openai_api_key = os.getenv(
         "AZURE_OPENAI_API_KEY"
     )  # Add your Azure OpenAI key

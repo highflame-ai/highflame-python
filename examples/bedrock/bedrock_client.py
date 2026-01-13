@@ -2,13 +2,13 @@ import os
 import base64
 import requests
 from openai import OpenAI, AsyncOpenAI, AzureOpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 from pydantic import BaseModel
 
 # Environment Variables
-javelin_base_url = os.getenv("JAVELIN_BASE_URL")
+javelin_base_url = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
 openai_api_key = os.getenv("OPENAI_API_KEY")
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 
 # Global JavelinClient, used for everything

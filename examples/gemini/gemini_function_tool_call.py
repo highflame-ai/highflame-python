@@ -2,14 +2,14 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 
 
 def init_gemini_client():
     gemini_api_key = os.getenv("GEMINI_API_KEY")
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 
     if not gemini_api_key or not javelin_api_key:
         raise ValueError("Missing GEMINI_API_KEY or JAVELIN_API_KEY")

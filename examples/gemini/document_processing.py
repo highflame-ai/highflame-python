@@ -3,11 +3,11 @@ import os
 
 from openai import OpenAI
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 # Environment Variables
 openai_api_key = os.getenv("OPENAI_API_KEY")
-javelin_api_key = os.getenv("JAVELIN_API_KEY")
+javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 
 # Initialize Javelin Client
@@ -19,9 +19,14 @@ client = JavelinClient(config)
 
 # Initialize Javelin Client
 def initialize_javelin_client():
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    javelin_api_key = (
+        os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+    )
+    base_url = (
+        os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL")
+    )
     config = JavelinConfig(
-        javelin_api_key=javelin_api_key, base_url=os.getenv("JAVELIN_BASE_URL")
+        javelin_api_key=javelin_api_key, base_url=base_url
     )
     return JavelinClient(config)
 

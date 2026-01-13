@@ -10,7 +10,10 @@ def init_mistral_model():
     return init_chat_model(
         model_name="mistral-large-latest",
         model_provider="openai",
-        base_url=f"{os.getenv('JAVELIN_BASE_URL')}/v1",
+        base_url=(
+            f"{os.getenv('HIGHFLAME_BASE_URL') or os.getenv('JAVELIN_BASE_URL')}"
+            "/v1"
+        ),
         extra_headers={
             "x-javelin-route": "mistral_univ",
             "x-api-key": os.environ.get("OPENAI_API_KEY"),

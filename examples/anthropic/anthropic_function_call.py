@@ -2,7 +2,7 @@
 import os
 import json
 import asyncio
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -11,8 +11,8 @@ load_dotenv()
 
 # Javelin Setup
 config = JavelinConfig(
-    base_url=os.getenv("JAVELIN_BASE_URL"),
-    javelin_api_key=os.getenv("JAVELIN_API_KEY"),
+    base_url=os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL"),
+    javelin_api_key=os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY"),
 )
 client = JavelinClient(config)
 

@@ -2,17 +2,17 @@
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 
 
 def init_azure_client_with_javelin():
     azure_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-    javelin_api_key = os.getenv("JAVELIN_API_KEY")
+    highflame_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 
-    if not azure_api_key or not javelin_api_key:
-        raise ValueError("Missing AZURE_OPENAI_API_KEY or JAVELIN_API_KEY")
+    if not azure_api_key or not highflame_api_key:
+        raise ValueError("Missing AZURE_OPENAI_API_KEY or HIGHFLAME_API_KEY")
 
     # Azure OpenAI setup
     azure_client = AzureOpenAI(
@@ -21,8 +21,8 @@ def init_azure_client_with_javelin():
         api_key=azure_api_key,
     )
 
-    # Register with Javelin
-    config = JavelinConfig(javelin_api_key=javelin_api_key)
+    # Register with Highflame
+    config = JavelinConfig(javelin_api_key=highflame_api_key)
     client = JavelinClient(config)
     client.register_azureopenai(azure_client, route_name="azureopenai_univ")
 

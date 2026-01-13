@@ -4,7 +4,7 @@ import os
 import boto3
 from dotenv import load_dotenv
 
-from javelin_sdk import JavelinClient, JavelinConfig
+from highflame_sdk import JavelinClient, JavelinConfig
 
 load_dotenv()
 
@@ -28,7 +28,10 @@ def init_bedrock():
 
     # Initialize Javelin client
     config = JavelinConfig(
-        javelin_api_key=os.getenv("JAVELIN_API_KEY")  # add your Javelin API key here
+        # add your API key here
+        javelin_api_key=(
+            os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+        )
     )
     javelin_client = JavelinClient(config)
 
