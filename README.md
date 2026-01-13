@@ -54,16 +54,16 @@ response = client.query_route(
 
 ```bash
 # Authenticate
-highflame auth
+highflame-cli auth
 
 # List routes
-highflame route list
+highflame-cli route list
 
 # Create a route
-highflame route create --name my_route --file route.json
+highflame-cli route create --name my_route --file route.json
 
 # Get route details
-highflame route get --name my_route
+highflame-cli route get --name my_route
 ```
 
 ---
@@ -210,8 +210,8 @@ javelin routes list
 **v2:**
 
 ```bash
-highflame auth
-highflame route list
+highflame-cli auth
+highflame-cli route list
 ```
 
 ### Exception Handling Changes
@@ -339,7 +339,7 @@ async with Highflame(config) as client:
 5. ✅ Update configuration field names: `javelin_api_key` → `api_key`
 6. ✅ Update API endpoint if using custom base URL
 7. ✅ Update exception imports: `JavelinClientError` → `ClientError`
-8. ✅ Update CLI commands: `javelin` → `highflame`
+8. ✅ Update CLI commands: `javelin` → `highflame-cli`
 9. ✅ Update cache directory references if any
 
 **Note:** HTTP headers are backward compatible - both old and new headers are sent automatically, so no immediate changes needed for header handling. The v2 SDK maintains **full API compatibility** with v1 in terms of functionality - all methods, parameters, and responses remain the same, only naming conventions have changed.
