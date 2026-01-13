@@ -11,12 +11,12 @@ from google.genai.types import Content, Part
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-JAVELIN_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
+HIGHFLAME_API_KEY = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY")
 
 if not GEMINI_API_KEY:
     raise ValueError("Missing GEMINI_API_KEY")
-if not JAVELIN_API_KEY:
-    raise ValueError("Missing JAVELIN_API_KEY")
+if not HIGHFLAME_API_KEY:
+    raise ValueError("Missing HIGHFLAME_API_KEY")
 
 # Agent 1: Researcher
 research_agent = LlmAgent(
@@ -25,7 +25,7 @@ research_agent = LlmAgent(
         api_base="https://api-dev.javelin.live/v1/",
         extra_headers={
             "x-javelin-route": "google_univ",
-            "x-api-key": JAVELIN_API_KEY,
+            "x-api-key": HIGHFLAME_API_KEY,
             "Authorization": f"Bearer {GEMINI_API_KEY}",
         },
     ),
@@ -41,7 +41,7 @@ summary_agent = LlmAgent(
         api_base="https://api-dev.javelin.live/v1/",
         extra_headers={
             "x-javelin-route": "google_univ",
-            "x-api-key": JAVELIN_API_KEY,
+            "x-api-key": HIGHFLAME_API_KEY,
             "Authorization": f"Bearer {GEMINI_API_KEY}",
         },
     ),
@@ -57,7 +57,7 @@ report_agent = LlmAgent(
         api_base="https://api-dev.javelin.live/v1/",
         extra_headers={
             "x-javelin-route": "google_univ",
-            "x-api-key": JAVELIN_API_KEY,
+            "x-api-key": HIGHFLAME_API_KEY,
             "Authorization": f"Bearer {GEMINI_API_KEY}",
         },
     ),

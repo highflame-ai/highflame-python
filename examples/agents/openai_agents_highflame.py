@@ -23,10 +23,10 @@ load_dotenv()
 set_default_openai_api("chat_completions")
 
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
-javelin_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY", "")
-javelin_base_url = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL", "")
+highflame_api_key = os.getenv("HIGHFLAME_API_KEY") or os.getenv("JAVELIN_API_KEY", "")
+highflame_base_url = os.getenv("HIGHFLAME_BASE_URL") or os.getenv("JAVELIN_BASE_URL", "")
 
-if not (openai_api_key and javelin_api_key and javelin_base_url):
+if not (openai_api_key and highflame_api_key and highflame_base_url):
     raise ValueError(
         "Missing OPENAI_API_KEY, HIGHFLAME_API_KEY (or JAVELIN_API_KEY), or HIGHFLAME_BASE_URL (or JAVELIN_BASE_URL) in .env"
     )
@@ -34,9 +34,9 @@ if not (openai_api_key and javelin_api_key and javelin_base_url):
 # Create async OpenAI client
 async_openai_client = AsyncOpenAI(api_key=openai_api_key)
 
-# Register with Javelin
+# Register with Highflame
 javelin_client = JavelinClient(
-    JavelinConfig(javelin_api_key=javelin_api_key, base_url=javelin_base_url)
+    JavelinConfig(javelin_api_key=highflame_api_key, base_url=highflame_base_url)
 )
 # Adjust route name if needed
 javelin_client.register_openai(async_openai_client, route_name="openai_univ")

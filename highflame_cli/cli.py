@@ -45,23 +45,9 @@ from highflame_cli._internal.commands import (
     get_alerts,
     get_aws_config,
     get_azure_config,
-    delete_aws_config
+    delete_aws_config,
+    get_cache_file,
 )
-
-
-def get_cache_file():
-    """Get cache file path, checking new location first, then falling back to old location"""
-    home_dir = Path.home()
-    # Try new location first
-    new_cache_file = home_dir / ".highflame" / "cache.json"
-    if new_cache_file.exists():
-        return new_cache_file
-    # Fall back to old location for backward compatibility
-    old_cache_file = home_dir / ".javelin" / "cache.json"
-    if old_cache_file.exists():
-        return old_cache_file
-    # Default to new location if neither exists
-    return new_cache_file
 
 
 def check_permissions():
