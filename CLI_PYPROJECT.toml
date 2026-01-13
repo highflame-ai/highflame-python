@@ -16,7 +16,7 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-highflame = "highflame_cli.cli:main"
+highflame-cli = "highflame_cli.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"

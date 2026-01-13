@@ -69,7 +69,7 @@ def check_permissions():
     cache_file = get_cache_file()
 
     if not cache_file.exists():
-        print("❌ Not authenticated. Please run 'highflame auth' first.")
+        print("❌ Not authenticated. Please run 'highflame-cli auth' first.")
         sys.exit(1)
 
     try:
@@ -93,7 +93,7 @@ def check_permissions():
 def main():
     # Fetch the version dynamically from the package
     package_version = importlib.metadata.version(
-        "highflame-sdk"
+        "highflame"
     )
 
     parser = argparse.ArgumentParser(
