@@ -318,6 +318,127 @@ async with Highflame(config) as client:
 
 ---
 
+## Backend Changes Required
+
+To complete the migration from Javelin to Highflame, the following backend changes are required:
+
+### 1. Database Schema Changes
+
+**File: `highflame-admin/internal/admin/module/keyvault/schema.go`**
+
+- Rename field: `JavelinSecretKey` → `HighflameSecretKey`
+- Database column: `api_key_secret_key_javelin` → `api_key_secret_key_highflame`
+- Database column: `api_key_secret_key_javelin_start` → `api_key_secret_key_highflame_start`
+
+**File: `highflame-admin/internal/admin/module/apikey/schema.go`**
+
+- Table name: `javelinapikeys` → `highflameapikeys` (or maintain backward compatibility)
+- Struct name: `JavelinAPIKey` → `HighflameAPIKey`
+
+### 2. Go Model Changes
+
+**File: `highflame-admin/internal/admin/model/keyvault.go`**
+
+```go
+// Change:
+JavelinSecretKey string `json:"api_key_secret_key_javelin,omitempty"`
+
+// To:
+HighflameSecretKey string `json:"api_key_secret_key_highflame,omitempty"`
+```
+
+**File: `highflame-admin/internal/admin/model/apikey.go`**
+
+```go
+// Change:
+type JavelinAPIKey struct { ... }
+
+// To:
+type HighflameAPIKey struct { ... }
+```
+
+**File: `highflame-admin/internal/admin/model/chronicle.go`**
+
+```go
+// Change:
+JavelinResponseHeaders json.RawMessage `json:"javelin_response_headers"`
+
+// To:
+HighflameResponseHeaders json.RawMessage `json:"highflame_response_headers"`
+```
+
+### 3. Service Layer Changes
+
+**File: `highflame-admin/internal/admin/module/keyvault/service.go`**
+
+- Update all `JavelinSecretKey` references to `HighflameSecretKey`
+- Update variable names: `javelin_key` → `highflame_key`, etc.
+
+**File: `highflame-admin/internal/admin/module/audit/repo.go`**
+
+- Update field deletion: `"api_key_secret_key_javelin"` → `"api_key_secret_key_highflame"`
+
+### 4. Swagger/OpenAPI Specification Updates
+
+**Files to update:**
+
+- `highflame-admin/docs/swagger.yaml`
+- `highflame-admin/docs/swagger.json`
+- `highflame-admin/docs/docs.go`
+
+**Changes required:**
+
+- `api_key_secret_key_javelin` → `api_key_secret_key_highflame`
+- `javelin_response_headers` → `highflame_response_headers`
+- Model names: `JavelinAPIKey` → `HighflameAPIKey`
+
+After updating, regenerate the Swagger spec and sync Python SDK models using `swagger/sync_models.py`.
+
+### 5. Database Migration
+
+Create a migration script to:
+
+1. Add new columns alongside old ones (for zero-downtime migration)
+2. Migrate existing data from old columns to new columns
+3. Update application code to use new field names
+4. Deprecate old columns after transition period
+5. Remove old columns in a future release
+
+### 6. Other Backend Services
+
+**File: `highflame-core/pkg/persist/admin_client/aws_secrets.go`**
+
+- Update `JavelinSecretKey` field to `HighflameSecretKey`
+
+**File: `highflame-core/tests/e2e/promptfoo/extensions/shared/utils.js`**
+
+- Update test references from `api_key_secret_key_javelin` to `api_key_secret_key_highflame`
+
+### 7. API Header Support (Backward Compatibility)
+
+The Python SDK currently sends both `x-javelin-*` and `x-highflame-*` headers for backward compatibility. The backend should:
+
+- **Continue accepting** `x-javelin-*` headers during the transition period
+- **Prefer** `x-highflame-*` headers when both are present
+- **Plan deprecation timeline** for old headers (recommend 6-12 month transition period)
+- **Log usage** of old headers to track migration progress
+
+### Backend Migration Checklist
+
+- [ ] Database schema: Add new `api_key_secret_key_highflame` column
+- [ ] Database migration: Script to migrate data from old to new columns
+- [ ] Go models: Rename `JavelinSecretKey` → `HighflameSecretKey`
+- [ ] Go structs: Rename `JavelinAPIKey` → `HighflameAPIKey`
+- [ ] Service layer: Update all field references
+- [ ] Swagger spec: Regenerate with new field names
+- [ ] Tests: Update all test references
+- [ ] Documentation: Update API documentation
+- [ ] Header support: Ensure both old and new headers are accepted
+- [ ] Monitoring: Track usage of old vs new headers/fields
+- [ ] Deprecation plan: Create timeline for removing old fields/headers
+
+---
+
 ## Development Setup
 
 ### Setting up Virtual Environment

@@ -30,4 +30,4 @@ install:
 	poetry install
 
 install-wheel:
-	pip install dist/highflame_sdk-*.whl --force-reinstall
+	pip install dist/highflame-*.whl --force-reinstall

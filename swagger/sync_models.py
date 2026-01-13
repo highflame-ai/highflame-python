@@ -8,7 +8,7 @@ import yaml
 
 SWAGGER_FILE_PATH = Path(os.path.join(os.path.dirname(__file__), "swagger.yaml"))
 MODELS_FILE_PATH = Path(
-    os.path.join(os.path.dirname(__file__), "..", "highflame_sdk", "models.py")
+    os.path.join(os.path.dirname(__file__), "..", "highflame", "models.py")
 )
 
 FIELDS_TO_EXCLUDE = {

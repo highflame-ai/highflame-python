@@ -412,7 +412,7 @@ class Highflame:
             self._add_choice_events(span, response_data, system_name)
 
         except Exception as e:
-            span.set_attribute("javelin.response.body", str(response))
+            span.set_attribute("highflame.response.body", str(response))
             span.set_attribute("highflame.error", str(e))
 
     def _extract_response_data(self, response):
