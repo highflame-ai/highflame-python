@@ -19,7 +19,7 @@ def init_tracer() -> trace.Tracer:
     )
     provider = TracerProvider(resource=resource)
     exporter = OTLPSpanExporter(
-        endpoint=os.getenv("OTLP_ENDPOINT", "https://cerberus-http.api-dev.highflame.dev/v1/traces")
+        endpoint=os.getenv("OTLP_ENDPOINT")
     )
     provider.add_span_processor(BatchSpanProcessor(exporter))
     trace.set_tracer_provider(provider)
