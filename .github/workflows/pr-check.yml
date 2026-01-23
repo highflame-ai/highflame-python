@@ -57,8 +57,11 @@ jobs:
           fi
 
   highflame-lint-check:
+    needs:
+      - reusable-workflow-env
     permissions:
       contents: 'read'
+      id-token: 'write'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -72,18 +75,28 @@ jobs:
           python-version: ${{ env.PY_VER }}
           cache: 'pip'
 
-      - name: Python Lint Check
+      - name: Lint Check
         shell: bash
         run: |-
-          pip install flake8
-          flake8 . --config=${{ env.PY_LINT_CFG }} --output-file=${{ env.LINT_REPORT_FILE }}.json
-
+           pip install flake8
+                flake8 . --config=${{ env.PY_LINT_CFG }} --output-file=${{ env.LINT_REPORT_FILE }}.json
+               
       - name: Upload Lint Report
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LINT_REPORT_FILE }}
           path: ${{ env.LINT_REPORT_FILE }}.json
           retention-days: 1
+
+      - name: Check If File Exists
+        id: check_lint_report
+        run: |
+          if [[ -f "${{ env.LINT_REPORT_FILE }}.json" ]] ; then
+            echo "lint_report=true" >> ${GITHUB_OUTPUT}
+          fi
+    outputs:
+      lint_report: ${{ steps.check_lint_report.outputs.lint_report }}
 
   highflame-trivy-scan:
     permissions:
