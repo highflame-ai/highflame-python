@@ -57,8 +57,6 @@ jobs:
           fi
 
   highflame-lint-check:
-    needs:
-      - reusable-workflow-env
     permissions:
       contents: 'read'
       id-token: 'write'
