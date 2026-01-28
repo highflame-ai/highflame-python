@@ -39,9 +39,9 @@ jobs:
 
       - name: Get the last commit message
         id: commit_message
-        run: |
-          COMMIT_MESSAGE=$(git show -s --format=%s)
-          echo "message=${COMMIT_MESSAGE}" >> ${GITHUB_OUTPUT}
+        run: |-
+               COMMIT_MESSAGE=$(git show -s --format=%s)
+               echo "message=${COMMIT_MESSAGE}" >> ${GITHUB_OUTPUT}
 
       - name: Commit Message Check
         shell: bash
@@ -76,8 +76,8 @@ jobs:
       - name: Lint Check
         shell: bash
         run: |-
-           pip install flake8
-                flake8 . --config=${{ env.PY_LINT_CFG }} --output-file=${{ env.LINT_REPORT_FILE }}.json
+          pip install flake8
+          flake8 . --config=${{ env.PY_LINT_CFG }} --output-file=${{ env.LINT_REPORT_FILE }}.json
                
       - name: Upload Lint Report
         if: ${{ always() }}
@@ -89,9 +89,9 @@ jobs:
 
       - name: Check If File Exists
         id: check_lint_report
-        run: |
+        run: |-
           if [[ -f "${{ env.LINT_REPORT_FILE }}.json" ]] ; then
-            echo "lint_report=true" >> ${GITHUB_OUTPUT}
+             echo "lint_report=true" >> ${GITHUB_OUTPUT}
           fi
     outputs:
       lint_report: ${{ steps.check_lint_report.outputs.lint_report }}
