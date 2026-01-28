@@ -40,8 +40,8 @@ jobs:
       - name: Get the last commit message
         id: commit_message
         run: |-
-               COMMIT_MESSAGE=$(git show -s --format=%s)
-               echo "message=${COMMIT_MESSAGE}" >> ${GITHUB_OUTPUT}
+          COMMIT_MESSAGE=$(git show -s --format=%s)
+          echo "message=${COMMIT_MESSAGE}" >> ${GITHUB_OUTPUT}
 
       - name: Commit Message Check
         shell: bash
