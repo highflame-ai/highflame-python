@@ -17,9 +17,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PY_LINT_CFG: ".flake8"
-  LINT_REPORT_FILE: "lint-report"
-  PY_VER: 3.11.8
   PR_CHECK_PREFIX: "feat:|fix:|devops:|Merge|Revert|build\\(deps\\)|\\[Snyk\\]|Bump"
   GH_SEC_REPORT: false
   TRIVY_SEVERITY: "HIGH,CRITICAL"
@@ -61,6 +58,10 @@ jobs:
       contents: 'read'
       id-token: 'write'
     runs-on: ubuntu-24.04
+    env:
+       PY_VER: 3.12.0
+       PY_LINT_CFG: .flake8
+       LINT_REPORT_FILE: lint-report
     steps:
       - name: Checkout
         uses: actions/checkout@v4
